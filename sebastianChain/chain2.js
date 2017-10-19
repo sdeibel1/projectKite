@@ -11,7 +11,7 @@ function preload() {
 var floatLinks = [];
 var lastRect;
 var wind = 0;
-var windUp = -200;
+var windUp = -10;
 var windUpVariance = 0;
 
 function create() {
@@ -36,19 +36,20 @@ function lock() {
 }
 
 function update() {
-    // if (windUpVariance <= 2) {
-    //     windUp -= 5;
-    // } else if (windUpVariance >= 8) {
-    //     windUp += 20;
-    // } else {
+    windUpVariance = Math.random()*10;
+    if (windUpVariance <= 2) {
+        windUp -= 5;
+    } else if (windUpVariance >= 8) {
+        windUp += 5;
+    } else {
 
-    // }
-
-    if (windUp <= -400) {
-        windUp = -200;
-    } else if (windUp >= 250) {
-        windUp = -50;
     }
+
+    // if (windUp <= -400) {
+    //     windUp = -200;
+    // } else if (windUp >= 250) {
+    //     windUp = -50;
+    // }
 
     if (wind >= 50) {
         wind = 10;
@@ -57,8 +58,8 @@ function update() {
     }
 
     wind += Math.random()*10 - Math.random()*10;
-    windUpVariance += Math.random()*10 - 5 - windUp / 1000 ;
-    windUp += windUpVariance;
+    // windUpVariance += Math.random()*10 - 5 - windUp / 1000 ;
+    // windUp += windUpVariance;
     console.log(windUp);
 
 
@@ -75,9 +76,8 @@ function update() {
 function move(pointer, x, y, click) {
     if (game.input.mouse.locked) {
         for (var i = 0; i < floatLinks.length; i++) {
-            if (y > 0) {
-                floatLinks[i].body.velocity.y -= 5*game.input.mouse.event.movementY;
-            }
+            // The y movement is broken right now and does not work
+            floatLinks[i].body.velocity.y -= 5*game.input.mouse.event.movementY;
             floatLinks[i].body.velocity.x += 5*game.input.mouse.event.movementX;
         }
     }
@@ -85,7 +85,7 @@ function move(pointer, x, y, click) {
 
 function createRope(length, xAnchor, yAnchor) {
     var height = 16;        //  Height for the physics body - your image height is 8px
-    var width = 8;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
+    var width = 30;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
     var maxForce = 30000;    // The force that holds the rectangles together.
 
     for (var i = 0; i <= length; i++)
@@ -127,6 +127,10 @@ function createRope(length, xAnchor, yAnchor) {
         }
         if (length - i < 3) {
             floatLinks.push(lastRect);
+        }
+
+        if (length - i > 8) { 
+            newRect.visible = false;
         }
 
         lastRect = newRect;
