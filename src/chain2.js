@@ -5,6 +5,7 @@ function preload() {
     game.load.image('clouds', 'assets/images/clouds.jpg');
    // game.load.image('clouds', 'clouds.jpg');
     game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
+    game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
 
 }
 
@@ -60,7 +61,7 @@ function update() {
     wind += Math.random()*10 - Math.random()*10;
     // windUpVariance += Math.random()*10 - 5 - windUp / 1000 ;
     // windUp += windUpVariance;
-    console.log(windUp);
+    //console.log(windUp);
 
 
     for (var i = 0; i < floatLinks.length; i++) {
@@ -96,7 +97,11 @@ function createRope(length, xAnchor, yAnchor) {
         if (i % 2 === 0)
         {
             //  Add sprite (and switch frame every 2nd time)
-            newRect = game.add.sprite(x, y, 'chain', 1);
+            if (i === length) {
+                newRect = game.add.sprite(x, y, 'kite');
+            } else {
+                newRect = game.add.sprite(x, y, 'chain', 1);
+            }
         }
         else
         {
