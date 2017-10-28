@@ -2,10 +2,9 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: p
 
 function preload() {
 
-    game.load.image('clouds', 'assets/images/clouds.jpg');
-   // game.load.image('clouds', 'clouds.jpg');
+    game.load.image('bigClouds', 'assets/images/bigClouds.jpg');
     game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-    game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 600  );
+    game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
 
 }
 
@@ -17,14 +16,18 @@ var windUpVariance = 0;
 
 function create() {
 
-    game.add.tileSprite(0, 0, 800, 600, 'clouds');
+    game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
+    game.world.setBounds(0, 0, 1500, 1500);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.gravity.y = 0;
-
     //  Length, xAnchor, yAnchor
-    createRope(20, 400, 200);
+    var xCenter = game.world.width/2;
+
+    createRope(20, xCenter);
     game.input.onDown.add(lock,this);
     game.input.addMoveCallback(move, this);
+    game.camera.follow(lastRect, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+
 }
 
 function lock() {
@@ -68,9 +71,6 @@ function update() {
         floatLinks[i].body.velocity.y = windUp;
         floatLinks[i].body.velocity.x += wind;
     }
-
-    // lastRect.body.velocity.x += wind;
-    // lastRect.body.velocity.y = windUp;
 }
 
 
@@ -84,7 +84,7 @@ function move(pointer, x, y, click) {
     }
 }
 
-function createRope(length, xAnchor, yAnchor) {
+function createRope(length, xAnchor) {
     var height = 16;        //  Height for the physics body - your image height is 8px
     var width = 30;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
     var maxForce = 30000;    // The force that holds the rectangles together.
