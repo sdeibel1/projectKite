@@ -3,7 +3,8 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: p
 function preload() {
 
     game.load.image('bigClouds', 'assets/images/bigClouds.jpg');
-    game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
+    game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
+    //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
     game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
 
 }
@@ -98,14 +99,15 @@ function createRope(length, xAnchor) {
         {
             //  Add sprite (and switch frame every 2nd time)
             if (i === length) {
+                width = 80;
                 newRect = game.add.sprite(x, y, 'kite');
             } else {
-                newRect = game.add.sprite(x, y, 'chain', 1);
+                newRect = game.add.sprite(x, y, 'string');
             }
         }
         else
         {
-            newRect = game.add.sprite(x, y, 'chain', 1);
+            newRect = game.add.sprite(x, y, 'string');
             lastRect.bringToTop();
         }
 
