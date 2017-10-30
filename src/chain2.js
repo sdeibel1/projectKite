@@ -88,8 +88,7 @@ function lock() {
 
 function update() {
 
-    tail.kill();
-    tail.reset(kite.x,kite.y+45);    
+    tailReset();
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 5;
@@ -220,6 +219,10 @@ function Boost(){
     kite.body.velocity.y=-200;
 }
 
+function tailReset(){
+    tail.kill();
+    tail.reset(kite.x,kite.y+45);    
+}
 
 
 
