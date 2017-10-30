@@ -28,29 +28,35 @@ var windUpVariance = 0;
 
 function create() {
 
+    // Creates background and dimensions
     game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
-    // game.world.setBounds(0, 0, 1500, 1500);
-
     game.world.setBounds(0, 0, 800, 1500);
 
+    // Adds physics
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.gravity.y = 0;
-    //  Length, xAnchor, yAnchor
     var xCenter = game.world.width/2;
+    createRope(20, xCenter);
 
+    // Creates on screen group
+    onScreen = game.add.group();
 
+    // Adds kite
     kite = game.add.sprite(40,60, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
+    onScreen.add(kite);
 
 
-    lives = game.add.group();
-    game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
+
+    lives = game.add.text(0, 0, 'Lives : ', { font: '25px Arial', fill: '#fff' });
+    onScreen.add(lives);
+    // lives.anchor.setTo(kite.world.x, kite.world.y);
 
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-    createRope(20, xCenter);
+
     game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
 
@@ -132,6 +138,10 @@ function update() {
     {
         Boost();
     }
+
+    // // Moves the lives counter so you can always see it
+    // game.remove.text()
+    // game.add.text(kite.world.x, kite.world.y, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 }
 
 
