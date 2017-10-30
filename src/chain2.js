@@ -9,7 +9,8 @@ function preload() {
 
 }
 
-var floatLinks = [];
+// Initializes all variables
+var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
 var windUp = -10;
@@ -25,12 +26,15 @@ function create() {
     var xCenter = game.world.width/2;
 
     createRope(20, xCenter);
-    game.input.onDown.add(lock,this);
+    game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
+
+    // (Clay) I'm guessing this command allows the camera to follow the kite
     game.camera.follow(lastRect, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
+// Locks your cursor into the kite so you can control it
 function lock() {
     if(game.input.mouse.locked) {
         game.input.mouse.releasePointerLock();
@@ -90,13 +94,11 @@ function createRope(length, xAnchor) {
     var width = 30;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
     var maxForce = 30000;    // The force that holds the rectangles together.
 
-    for (var i = 0; i <= length; i++)
-    {
+    for (var i = 0; i <= length; i++) {
         var x = xAnchor;                    //  All rects are on the same x position
         var y = (game.height) - (i * height);     //  Every new rect is positioned below the last
 
-        if (i % 2 === 0)
-        {
+        if (i % 2 === 0) {
             //  Add sprite (and switch frame every 2nd time)
             if (i === length) {
                 width = 80;
@@ -104,9 +106,7 @@ function createRope(length, xAnchor) {
             } else {
                 newRect = game.add.sprite(x, y, 'string');
             }
-        }
-        else
-        {
+        } else {
             newRect = game.add.sprite(x, y, 'string');
             lastRect.bringToTop();
         }
@@ -117,19 +117,15 @@ function createRope(length, xAnchor) {
         //  Set custom rectangle
         newRect.body.setRectangle(width, height);
 
-        if (i === 0)
-        {
+        if (i === 0) {
             //  Anchor the first one created
             newRect.body.static = true;
-        }
-        else
-        {
+        } else {
            newRect.body.mass = length / i;     //  Reduce mass for evey rope element
         }
 
         //  After the first rectangle is created we can add the constraint
-        if (lastRect)
-        {
+        if (lastRect) {
             game.physics.p2.createRevoluteConstraint(newRect, [0, 10], lastRect, [0, -10], maxForce);
         }
         if (length - i < 3) {
