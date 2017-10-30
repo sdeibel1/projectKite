@@ -2,7 +2,11 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: p
 
 function preload() {
 
-    game.load.image('bigClouds', 'assets/images/bigClouds.jpg');
+    // game.load.image('bigClouds', 'assets/images/bigClouds.jpg');
+
+    //testing out new bg
+
+    game.load.image('bigClouds', 'assets/images/bg3');
     game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
     //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
     game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
@@ -10,6 +14,12 @@ function preload() {
 }
 
 // Initializes all variables
+var kite;
+var tail;
+var lives;
+var boost;
+var directional;
+
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
@@ -19,18 +29,37 @@ var windUpVariance = 0;
 function create() {
 
     game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
-    game.world.setBounds(0, 0, 1500, 1500);
+    // game.world.setBounds(0, 0, 1500, 1500);
+
+    game.world.setBounds(0, 0, 800, 1500);
+
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.gravity.y = 0;
     //  Length, xAnchor, yAnchor
     var xCenter = game.world.width/2;
+
+
+    kite = game.add.sprite(40,60, 'kite');
+    kite.anchor.setTo(0,0);
+    game.physics.enable(kite, Phaser.Physics.P2JS);
+
+
+    lives = game.add.group();
+    game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
+
+    directional= game.input.keyboard.createCursorKeys();
+    boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     createRope(20, xCenter);
     game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
 
     // (Clay) I'm guessing this command allows the camera to follow the kite
-    game.camera.follow(lastRect, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    // game.camera.follow(lastRect, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+
+
+    //changed this a bit to follow kite object
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
@@ -75,6 +104,32 @@ function update() {
     for (var i = 0; i < floatLinks.length; i++) {
         floatLinks[i].body.velocity.y = windUp;
         floatLinks[i].body.velocity.x += wind;
+    }
+
+    kite.body.velocity.y = 150;
+
+    if (directional.left.isDown){
+            kite.body.velocity.x = -150;
+        }
+    else if (directional.right.isDown){
+            kite.body.velocity.x = 150;
+        }
+
+
+    // kite.body.velocity.x += wind;
+
+    // if(kite.body.velocity.x<0) 
+    // {
+    //     kite.angle = 135;
+
+    // }else if(kite.body.velocity.x>0){
+
+    //     kite.angle = 45;
+    // }
+
+    if(boost.isDown)
+    {
+        Boost();
     }
 }
 
@@ -140,4 +195,8 @@ function createRope(length, xAnchor) {
 
     }
 
+}
+
+function Boost(){
+    kite.body.velocity.y=-200;
 }
