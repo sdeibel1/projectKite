@@ -6,7 +6,7 @@ function preload() {
 
     //testing out new bg
 
-    game.load.image('bigClouds', 'assets/images/bg3');
+    game.load.image('bigClouds', 'assets/images/bg3.jpg');
     game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
     //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
     game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
@@ -83,6 +83,7 @@ function update() {
 
     }
 
+    // Why is this commented out? When I un-comment it, nothing seems to change
     // if (windUp <= -400) {
     //     windUp = -200;
     // } else if (windUp >= 250) {
@@ -118,7 +119,7 @@ function update() {
 
     // kite.body.velocity.x += wind;
 
-    // if(kite.body.velocity.x<0) 
+    // if(kite.body.velocity.x<0)
     // {
     //     kite.angle = 135;
 
