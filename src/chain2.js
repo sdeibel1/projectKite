@@ -6,7 +6,7 @@ function preload() {
 
     //testing out new bg
 
-    game.load.image('bigClouds', 'assets/images/bg3.jpg');
+    game.load.image('bigClouds', 'assets/images/bg3');
     game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
     //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
     game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
@@ -19,6 +19,9 @@ var tail;
 var lives;
 var boost;
 var directional;
+var powerUp;
+
+var xCenter
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -34,9 +37,19 @@ function create() {
 
     // Adds physics
     game.physics.startSystem(Phaser.Physics.P2JS);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
     game.physics.p2.gravity.y = 0;
-    var xCenter = game.world.width/2;
-    createRope(20, xCenter);
+    //  Length, xAnchor, yAnchor
+    xCenter = game.world.width/2;
+    
+    // powerUp=game.add.sprite(16,26,'string');
+    // powerUp.anchor.setTo(1,1);
+    // game.physics.enable(powerUp, Phaser.Physics.ARCADE);
+
+    tail = game.add.sprite(4,26,'string');
+    tail.anchor.setTo(0,0);
+    game.physics.enable(tail, Phaser.Physics.P2JS);
 
     // Creates on screen group
     onScreen = game.add.group();
@@ -80,6 +93,8 @@ function lock() {
 }
 
 function update() {
+
+    tailReset();
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 5;
@@ -89,7 +104,6 @@ function update() {
 
     }
 
-    // Why is this commented out? When I un-comment it, nothing seems to change
     // if (windUp <= -400) {
     //     windUp = -200;
     // } else if (windUp >= 250) {
@@ -142,6 +156,8 @@ function update() {
     // // Moves the lives counter so you can always see it
     // game.remove.text()
     // game.add.text(kite.world.x, kite.world.y, 'Lives : ', { font: '25px Arial', fill: '#fff' });
+    // game.Physics.P2JS.overlap(kite, powerUp, collisionHandler, null, this);
+
 }
 
 
@@ -211,3 +227,15 @@ function createRope(length, xAnchor) {
 function Boost(){
     kite.body.velocity.y=-200;
 }
+
+function tailReset(){
+    tail.kill();
+    tail.reset(kite.x,kite.y+45);
+}
+
+
+
+
+// fuction collisionHandler(kite,powerUp){
+//     kite.body.velocity.y=-350;
+// }
