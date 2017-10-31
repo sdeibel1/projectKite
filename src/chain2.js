@@ -6,10 +6,11 @@ function preload() {
 
     //testing out new bg
 
-    game.load.image('bigClouds', 'assets/images/bg3');
+    game.load.image('bigClouds', 'assets/images/bg3.jpg');
     game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
     //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
     game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
+    game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
 
 }
 
@@ -34,7 +35,7 @@ function create() {
     game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
     // game.world.setBounds(0, 0, 1500, 1500);
 
-    game.world.setBounds(0, 0, 800, 1500);
+    game.world.setBounds(0, 0, 1500, 1500);
 
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -43,17 +44,17 @@ function create() {
     //  Length, xAnchor, yAnchor
     xCenter = game.world.width/2;
     
-    // powerUp=game.add.sprite(16,26,'string');
-    // powerUp.anchor.setTo(1,1);
-    // game.physics.enable(powerUp, Phaser.Physics.ARCADE);
+    powerUp=game.add.sprite(400 ,160,'powerUp');
+    powerUp.anchor.setTo(1,1);
+    game.physics.enable(powerUp, Phaser.Physics.ARCADE);
 
     tail = game.add.sprite(4,26,'string');
-    tail.anchor.setTo(0,0);
+    tail.anchor.setTo(0,0); 
     game.physics.enable(tail, Phaser.Physics.P2JS);
 
 
 
-    kite = game.add.sprite(40,60, 'kite');
+    kite = game.add.sprite(135,135, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
 
@@ -222,7 +223,7 @@ function Boost(){
 
 function tailReset(){
     tail.kill();
-    tail.reset(kite.x,kite.y+45);    
+    tail.reset(kite.x,kite.y+90);    
 }
 
 
