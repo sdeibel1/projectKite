@@ -9,7 +9,7 @@ function preload() {
     game.load.image('bigClouds', 'assets/images/bg3');
     game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
     //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-    game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
+    game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
 
 }
 
@@ -31,11 +31,11 @@ var windUpVariance = 0;
 
 function create() {
 
-    // Creates background and dimensions
     game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
+    // game.world.setBounds(0, 0, 1500, 1500);
+
     game.world.setBounds(0, 0, 800, 1500);
 
-    // Adds physics
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -51,25 +51,20 @@ function create() {
     tail.anchor.setTo(0,0);
     game.physics.enable(tail, Phaser.Physics.P2JS);
 
-    // Creates on screen group
-    onScreen = game.add.group();
 
-    // Adds kite
+
     kite = game.add.sprite(40,60, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
-    onScreen.add(kite);
 
 
-
-    lives = game.add.text(0, 0, 'Lives : ', { font: '25px Arial', fill: '#fff' });
-    onScreen.add(lives);
-    // lives.anchor.setTo(kite.world.x, kite.world.y);
+    lives = game.add.group();
+    game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-
+    createRope(20, xCenter);
     game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
 
@@ -139,7 +134,7 @@ function update() {
 
     // kite.body.velocity.x += wind;
 
-    // if(kite.body.velocity.x<0)
+    // if(kite.body.velocity.x<0) 
     // {
     //     kite.angle = 135;
 
@@ -153,9 +148,6 @@ function update() {
         Boost();
     }
 
-    // // Moves the lives counter so you can always see it
-    // game.remove.text()
-    // game.add.text(kite.world.x, kite.world.y, 'Lives : ', { font: '25px Arial', fill: '#fff' });
     // game.Physics.P2JS.overlap(kite, powerUp, collisionHandler, null, this);
 
 }
@@ -230,7 +222,7 @@ function Boost(){
 
 function tailReset(){
     tail.kill();
-    tail.reset(kite.x,kite.y+45);
+    tail.reset(kite.x,kite.y+45);    
 }
 
 
@@ -238,4 +230,4 @@ function tailReset(){
 
 // fuction collisionHandler(kite,powerUp){
 //     kite.body.velocity.y=-350;
-// }
+// }    
