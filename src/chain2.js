@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
 
 function preload() {
 
@@ -90,6 +90,7 @@ function lock() {
 
 function update() {
 
+    // kite.angle = 70    kite.angle = 7;;
     tailReset();
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
@@ -123,7 +124,7 @@ function update() {
         floatLinks[i].body.velocity.x += wind;
     }
 
-    kite.body.velocity.y = 150;
+    kite.body.velocity.y += 150/60;
 
     if (directional.left.isDown){
             kite.body.velocity.x = -150;
@@ -131,6 +132,7 @@ function update() {
     else if (directional.right.isDown){
             kite.body.velocity.x = 150;
         }
+
 
 
     // kite.body.velocity.x += wind;
@@ -218,13 +220,15 @@ function createRope(length, xAnchor) {
 }
 
 function Boost(){
-    kite.body.velocity.y=-200;
+    kite.body.velocity.y+= -600/60;
 }
 
 function tailReset(){
     tail.kill();
     tail.reset(kite.x,kite.y+90);    
 }
+
+        
 
 
 
