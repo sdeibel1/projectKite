@@ -160,7 +160,7 @@ function update() {
     yAcclCap();
     xAcclCap();
 
-    game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
+    // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 
 
 
