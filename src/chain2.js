@@ -6,11 +6,11 @@ function preload() {
 
     //testing out new bg
 
-    game.load.image('bigClouds', 'assets/images/bg3.jpg');
-    game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
-    //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-    game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
-    game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
+        game.load.image('bigClouds', 'assets/images/bg3.jpg');
+        game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
+        //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
+        game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
+        game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
 
 }
 
@@ -46,7 +46,7 @@ function create() {
     
     powerUp=game.add.sprite(400 ,160,'powerUp');
     powerUp.anchor.setTo(1,1);
-    game.physics.enable(powerUp, Phaser.Physics.ARCADE);
+    game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
     tail = game.add.sprite(4,26,'string');
     tail.anchor.setTo(0,0); 
@@ -57,6 +57,8 @@ function create() {
     kite = game.add.sprite(135,135, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
+    // kite.body.collideWorldBounds = true;
+    // kite.body.bounce.setTo(0.5, 0.5);
 
 
     lives = game.add.group();
@@ -151,7 +153,14 @@ function update() {
         Boost();
     }
 
-    // game.Physics.P2JS.overlap(kite, powerUp, collisionHandler, null, this);
+    // yWindUpdate();    
+    xWindUpdate();
+    yAcclCap();
+    xAcclCap();
+
+    game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
+
+
 
 }
 
@@ -228,11 +237,36 @@ function tailReset(){
     tail.reset(kite.x,kite.y+90);    
 }
 
+function yAcclCap(){
+    if(kite.body.velocity.y>400){
+        kite.body.velocity.y=400;
+    }
+    else if (kite.body.velocity.y<-600){
+        kite.body.velocity.y=-600;      
+    }
+}
+
+
+function xAcclCap(){
+    if(kite.body.velocity.x>300){
+        kite.body.velocity.x=300;
+    }
+    else if (kite.body.velocity.x<-300){
+        kite.body.velocity.x=-300;      
+    }
+}
         
 
+function collisionHandler(kite, powerUp){
+    powerUp.kill();
+    kite.body.velocity.y=-350;
+}    
 
+function yWindUpdate(){
+    kite.body.velocity.y+=wind;
+}
 
+function xWindUpdate(){
+    kite.body.velocity.x+=wind;
+}
 
-// fuction collisionHandler(kite,powerUp){
-//     kite.body.velocity.y=-350;
-// }    
