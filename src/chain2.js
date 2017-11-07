@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
 
 function preload() {
 
@@ -9,13 +9,13 @@ function preload() {
     game.load.image('bigClouds', 'assets/images/bg3.jpg');
     game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
     //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-    game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
+    game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
+    game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
 
 }
 
 // Initializes all variables
 var kite;
-var tail;
 var lives;
 var boost;
 var directional;
@@ -31,11 +31,11 @@ var windUpVariance = 0;
 
 function create() {
 
-    // Creates background and dimensions
     game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
-    game.world.setBounds(0, 0, 800, 1500);
+    // game.world.setBounds(0, 0, 1500, 1500);
 
-    // Adds physics
+    game.world.setBounds(0, 0, 1500, 1500);
+
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -43,36 +43,30 @@ function create() {
     //  Length, xAnchor, yAnchor
     xCenter = game.world.width/2;
     
-    // powerUp=game.add.sprite(16,26,'string');
-    // powerUp.anchor.setTo(1,1);
-    // game.physics.enable(powerUp, Phaser.Physics.ARCADE);
+    powerUp=game.add.sprite(400 ,160,'powerUp');
+    powerUp.anchor.setTo(1,1);
+    game.physics.enable(powerUp, Phaser.Physics.ARCADE);
 
 
 
 
-    // Creates on screen group
-    onScreen = game.add.group();
-
-    // Adds kite
-    kite = game.add.sprite(40,60, 'kite');
+    kite = game.add.sprite(135,135, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
-    onScreen.add(kite);
+
+    //onScreen.add(kite);
 
     //Adds tail
-    createRope(5,kite.x,kite.y);
-    
+    createRope(5,kite.x,kite.y+20);
 
 
-
-    lives = game.add.text(0, 0, 'Lives : ', { font: '25px Arial', fill: '#fff' });
-    onScreen.add(lives);
-    // lives.anchor.setTo(kite.world.x, kite.world.y);
+    lives = game.add.group();
+    game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-
+    //createRope(20, xCenter);
     game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
 
@@ -97,7 +91,9 @@ function lock() {
 
 function update() {
 
+
     // tailReset();
+    // kite.angle = 70    kite.angle = 7;;
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 3;
@@ -130,7 +126,7 @@ function update() {
         floatLinks[i].body.velocity.x += wind;
     }
 
-    kite.body.velocity.y = 150;
+    kite.body.velocity.y += 150/60;
 
     if (directional.left.isDown){
             kite.body.velocity.x = -150;
@@ -140,9 +136,10 @@ function update() {
         }
 
 
+
     // kite.body.velocity.x += wind;
 
-    // if(kite.body.velocity.x<0)
+    // if(kite.body.velocity.x<0) 
     // {
     //     kite.angle = 135;
 
@@ -156,9 +153,6 @@ function update() {
         Boost();
     }
 
-    // // Moves the lives counter so you can always see it
-    // game.remove.text()
-    // game.add.text(kite.world.x, kite.world.y, 'Lives : ', { font: '25px Arial', fill: '#fff' });
     // game.Physics.P2JS.overlap(kite, powerUp, collisionHandler, null, this);
 
 }
@@ -206,7 +200,7 @@ function createRope(length, xAnchor,yAnchor) {
         if (i === 0) {
             //  Anchor the first one created
             newRect.body.static = false;
-            game.physics.p2.createRevoluteConstraint(kite, [0,+45], newRect, [0,10],maxForce);
+            game.physics.p2.createRevoluteConstraint(kite, [0,+60], newRect, [0,10],maxForce);
         } else {
            newRect.body.mass = length / i;     //  Reduce mass for evey rope element
         }
@@ -230,14 +224,16 @@ function createRope(length, xAnchor,yAnchor) {
 }
 
 function Boost(){
-    kite.body.velocity.y=-200;
+    kite.body.velocity.y+= -600/60;
 }
 
 
+
+        
 
 
 
 
 // fuction collisionHandler(kite,powerUp){
 //     kite.body.velocity.y=-350;
-// }
+// }    
