@@ -6,7 +6,7 @@ function preload() {
 
     //testing out new bg
 
-    game.load.image('bigClouds', 'assets/images/bg3');
+    game.load.image('bigClouds', 'assets/images/bg3.jpg');
     game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
     //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
     game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
@@ -47,9 +47,8 @@ function create() {
     // powerUp.anchor.setTo(1,1);
     // game.physics.enable(powerUp, Phaser.Physics.ARCADE);
 
-    tail = game.add.sprite(4,26,'string');
-    tail.anchor.setTo(0,0);
-    game.physics.enable(tail, Phaser.Physics.P2JS);
+
+
 
     // Creates on screen group
     onScreen = game.add.group();
@@ -59,6 +58,10 @@ function create() {
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     onScreen.add(kite);
+
+    //Adds tail
+    createRope(5,kite.x,kite.y);
+    
 
 
 
@@ -94,12 +97,12 @@ function lock() {
 
 function update() {
 
-    tailReset();
+    // tailReset();
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
-        windUp -= 5;
+        windUp -= 3;
     } else if (windUpVariance >= 8) {
-        windUp += 5;
+        windUp += 3;
     } else {
 
     }
@@ -171,20 +174,21 @@ function move(pointer, x, y, click) {
     }
 }
 
-function createRope(length, xAnchor) {
+function createRope(length, xAnchor,yAnchor) {
     var height = 16;        //  Height for the physics body - your image height is 8px
     var width = 30;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
     var maxForce = 30000;    // The force that holds the rectangles together.
 
     for (var i = 0; i <= length; i++) {
         var x = xAnchor;                    //  All rects are on the same x position
-        var y = (game.height) - (i * height);     //  Every new rect is positioned below the last
+        var y = (yAnchor) - (i * height);     //  Every new rect is positioned below the last
 
         if (i % 2 === 0) {
             //  Add sprite (and switch frame every 2nd time)
             if (i === length) {
-                width = 80;
-                newRect = game.add.sprite(x, y, 'kite');
+                newRect = game.add.sprite(x,y,'string');
+                //width = 80;
+                //newRect = game.add.sprite(x, y, 'kite');
             } else {
                 newRect = game.add.sprite(x, y, 'string');
             }
@@ -201,14 +205,15 @@ function createRope(length, xAnchor) {
 
         if (i === 0) {
             //  Anchor the first one created
-            newRect.body.static = true;
+            newRect.body.static = false;
+            game.physics.p2.createRevoluteConstraint(kite, [0,+45], newRect, [0,10],maxForce);
         } else {
            newRect.body.mass = length / i;     //  Reduce mass for evey rope element
         }
 
         //  After the first rectangle is created we can add the constraint
         if (lastRect) {
-            game.physics.p2.createRevoluteConstraint(newRect, [0, 10], lastRect, [0, -10], maxForce);
+            game.physics.p2.createRevoluteConstraint(newRect, [0, -10], lastRect, [0, 10], maxForce);
         }
         if (length - i < 3) {
             floatLinks.push(lastRect);
@@ -228,10 +233,7 @@ function Boost(){
     kite.body.velocity.y=-200;
 }
 
-function tailReset(){
-    tail.kill();
-    tail.reset(kite.x,kite.y+45);
-}
+
 
 
 
