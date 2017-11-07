@@ -200,7 +200,7 @@ function createRope(length, xAnchor,yAnchor) {
         if (i === 0) {
             //  Anchor the first one created
             newRect.body.static = false;
-            game.physics.p2.createRevoluteConstraint(kite, [0,+60], newRect, [0,10],maxForce);
+            game.physics.p2.createRevoluteConstraint(kite, [0,+70], newRect, [0,10],maxForce);
         } else {
            newRect.body.mass = length / i;     //  Reduce mass for evey rope element
         }
