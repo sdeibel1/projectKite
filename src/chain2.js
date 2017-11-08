@@ -21,8 +21,6 @@ var boost;
 var directional;
 var powerUp;
 
-var xCenter
-
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
@@ -31,52 +29,39 @@ var windUpVariance = 0;
 
 function create() {
 
+    // Setting up the game
     game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
-    // game.world.setBounds(0, 0, 1500, 1500);
-
     game.world.setBounds(0, 0, 1500, 1500);
-
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
     game.physics.p2.gravity.y = 0;
-    //  Length, xAnchor, yAnchor
-    xCenter = game.world.width/2;
-    
-    powerUp=game.add.sprite(400 ,160,'powerUp');
-    powerUp.anchor.setTo(1,1);
-    game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
-
-
-
+    // Creating the kite
     kite = game.add.sprite(135,135, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     // kite.body.collideWorldBounds = true;
     // kite.body.bounce.setTo(0.5, 0.5);
-
-    //onScreen.add(kite);
+    
+    // Creating the powerup
+    powerUp=game.add.sprite(400 ,160,'powerUp');
+    powerUp.anchor.setTo(1,1);
+    game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
     //Adds tail
     createRope(5,kite.x,kite.y+20);
 
-
+    // Creating lives text
     lives = game.add.group();
     game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 
+    // Setting up controls
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-    //createRope(20, xCenter);
     game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
 
-    // (Clay) I'm guessing this command allows the camera to follow the kite
-    // game.camera.follow(lastRect, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
-
-
-    //changed this a bit to follow kite object
+    // Sets up camera to follow the kite
     game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
@@ -156,9 +141,9 @@ function update() {
     }
 
     // yWindUpdate();    
-    xWindUpdate();
-    yAcclCap();
-    xAcclCap();
+    // xWindUpdate();
+    // yAcclCap();
+    // xAcclCap();
 
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 
