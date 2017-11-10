@@ -171,19 +171,8 @@ function createRope(length, xAnchor,yAnchor) {
         var x = xAnchor;                    //  All rects are on the same x position
         var y = (yAnchor) - (i * height);     //  Every new rect is positioned below the last
 
-        if (i % 2 === 0) {
-            //  Add sprite (and switch frame every 2nd time)
-            if (i === length) {
-                newRect = game.add.sprite(x,y,'string');
-                //width = 80;
-                //newRect = game.add.sprite(x, y, 'kite');
-            } else {
-                newRect = game.add.sprite(x, y, 'string');
-            }
-        } else {
-            newRect = game.add.sprite(x, y, 'string');
-            lastRect.bringToTop();
-        }
+        //Add string sprite
+        newRect = game.add.sprite(x,y,'string');
 
         //  Enable physicsbody
         game.physics.p2.enable(newRect, false);
@@ -218,7 +207,7 @@ function createRope(length, xAnchor,yAnchor) {
 }
 
 function Boost(){
-    kite.body.velocity.y+= -600/60;
+    kite.body.velocity.y+= -10;
 }
 
 
