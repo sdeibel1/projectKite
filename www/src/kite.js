@@ -20,6 +20,7 @@ var lives;
 var boost;
 var directional;
 var powerUp;
+var lastX;
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -58,22 +59,22 @@ function create() {
     // Setting up controls
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
+    game.input.onDown.add(onDown, this);
+    game.input.onUp.add(onUp, this);
 
     // Sets up camera to follow the kite
     game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
-// Locks your cursor into the kite so you can control it
-function lock() {
-    if(game.input.mouse.locked) {
-        game.input.mouse.releasePointerLock();
-        game.input.mouse.locked = false;
-    } else {
-        game.input.mouse.requestPointerLock();
-    }
+function onDown() {
+    lastX = game.input.activePointer.x;
+}
+
+function onUp() {
+    deltaX = game.input.activePointer.x - lastX;
+    kite.body.velocity.x += deltaX*.9;
 }
 
 function update() {
@@ -156,15 +157,9 @@ function update() {
 
 }
 
-
+// Does not work
 function move(pointer, x, y, click) {
-    if (game.input.mouse.locked) {
-        for (var i = 0; i < floatLinks.length; i++) {
-            // The y movement is broken right now and does not work
-            floatLinks[i].body.velocity.y -= 5*game.input.mouse.event.movementY;
-            floatLinks[i].body.velocity.x += 5*game.input.mouse.event.movementX;
-        }
-    }
+    kite.body.velocity.x += 1.2*game.input.activePointer.movementX; 
 }
 
 function createRope(length, xAnchor,yAnchor) {
