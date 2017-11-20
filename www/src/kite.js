@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
+  var game = new Phaser.Game(320, 570, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
 
 function preload() {
 
@@ -9,8 +9,10 @@ function preload() {
         game.load.image('bigClouds', 'assets/images/bg3.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-        game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
-        game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
+        //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
+        game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
+        game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
+        game.load.spritesheet('button', 'assets/images/button.gif', 100, 50);
 
 }
 
@@ -20,11 +22,8 @@ var lives;
 var boost;
 var directional;
 var powerUp;
-var altitude;
-var altitudeString;
-var altitudeText;
-//var currentHeight;
-//var lastHeight=135;
+var lastX;
+var button;
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -35,72 +34,96 @@ var windUpVariance = 0;
 function create() {
 
     // Setting up the game
-    game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
-    game.world.setBounds(0, 0, 1500, 1500);
+    game.add.tileSprite(0, 0, 320, 570, 'bigClouds');
+    game.world.setBounds(0, 0, 320, 570);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.p2.gravity.y = 0;
 
     // Creating the kite
-    kite = game.add.sprite(135,135, 'kite');
+    kite = game.add.sprite(100, 140, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     // kite.body.collideWorldBounds = true;
     // kite.body.bounce.setTo(0.5, 0.5);
-    
+
     // Creating the powerup
-    powerUp=game.add.sprite(400 ,160,'powerUp');
+    powerUp = game.add.sprite(100, 40,'powerUp');
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
     //Adds tail
-    createRope(5,kite.x,kite.y+20);
+    //createRope(5,kite.x,kite.y+20);
 
     // Creating lives text
     lives = game.add.group();
     game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 
-    //displaying the altitude of kite
-    altitudeString= 'Current Altitude : ';
-    altitude = kite.y;
-    game.add.text(20,10, altitudeString + altitude, { font: '25px Arial', fill: '#fff' });
-
-
     // Setting up controls
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    game.input.onDown.add(lock, this);
     game.input.addMoveCallback(move, this);
+    game.input.onDown.add(onDown, this);
+    game.input.onUp.add(onUp, this);
 
-    // Sets up camera to follow the kite
-    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+
+    // Restart button
+    button = game.add.button(50, 50 , 'button', actionOnClick, this, 2, 1, 0);
+
+    button.onInputOver.add(over, this);
+    button.onInputOut.add(out, this);
+    button.onInputUp.add(up, this);
+
+    button.visible = false;
+
+    kite.body.collideWorldBounds = true;
+    kite.body.gravity.x = game.rnd.integerInRange(-50, 50);
+    kite.body.gravity.y = 100 + Math.random() * 100;
+    kite.body.bounce.setTo(0.9, 0.9);
+
+    // Sets up camera to follow the kite. We don't want this right?
+    // game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
-// Locks your cursor into the kite so you can control it
-function lock() {
-    if(game.input.mouse.locked) {
-        game.input.mouse.releasePointerLock();
-        game.input.mouse.locked = false;
-    } else {
-        game.input.mouse.requestPointerLock();
-    }
+function up() {
+    console.log('button up', arguments);
+}
+
+function over() {
+    console.log('button over');
+}
+
+function out() {
+    console.log('button out');
+}
+
+function actionOnClick () {
+    background.visible =! background.visible;
+
+}
+function onDown() {
+    lastX = game.input.activePointer.x;
+}
+
+function onUp() {
+    deltaX = game.input.activePointer.x - lastX;
+    kite.body.velocity.x += deltaX*.9;
 }
 
 function update() {
 
+    lose();
 
+    if(!lose()) {
+      button.visible = false;
+    }
+
+    if(lose()) {
+      button.visible = true;
+    }
     // tailReset();
     // kite.angle = 70    kite.angle = 7;;
-
-
-    //altitude = altitude + (currentHeight - lastHeight);
-    altitudeUpdate();
-    
-
-
-
-
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 3;
@@ -136,17 +159,22 @@ function update() {
     kite.body.velocity.y += 150/60;
 
     if (directional.left.isDown){
-            kite.body.velocity.x = -150;
-        }
+      kite.body.velocity.x = -75;
+    }
     else if (directional.right.isDown){
-            kite.body.velocity.x = 150;
-        }
-
+      kite.body.velocity.x = 75;
+    }
+    else if (directional.up.isDown || boost.isDown){
+      kite.body.velocity.y = -75;
+    }
+    else if (directional.down.isDown){
+      kite.body.velocity.y = 75;
+    }
 
 
     // kite.body.velocity.x += wind;
 
-    // if(kite.body.velocity.x<0) 
+    // if(kite.body.velocity.x<0)
     // {
     //     kite.angle = 135;
 
@@ -155,15 +183,16 @@ function update() {
     //     kite.angle = 45;
     // }
 
-    if(boost.isDown)
-    {
-        Boost();
-    }
+    // if(boost.isDown)
+    // {
+    //     Boost();
+    // }
 
-    // yWindUpdate();    
+    // yWindUpdate();
     // xWindUpdate();
     // yAcclCap();
     // xAcclCap();
+
 
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 
@@ -171,15 +200,9 @@ function update() {
 
 }
 
-
+// Does not work
 function move(pointer, x, y, click) {
-    if (game.input.mouse.locked) {
-        for (var i = 0; i < floatLinks.length; i++) {
-            // The y movement is broken right now and does not work
-            floatLinks[i].body.velocity.y -= 5*game.input.mouse.event.movementY;
-            floatLinks[i].body.velocity.x += 5*game.input.mouse.event.movementX;
-        }
-    }
+    kite.body.velocity.x += 1.2*game.input.activePointer.movementX;
 }
 
 function createRope(length, xAnchor,yAnchor) {
@@ -191,19 +214,8 @@ function createRope(length, xAnchor,yAnchor) {
         var x = xAnchor;                    //  All rects are on the same x position
         var y = (yAnchor) - (i * height);     //  Every new rect is positioned below the last
 
-        if (i % 2 === 0) {
-            //  Add sprite (and switch frame every 2nd time)
-            if (i === length) {
-                newRect = game.add.sprite(x,y,'string');
-                //width = 80;
-                //newRect = game.add.sprite(x, y, 'kite');
-            } else {
-                newRect = game.add.sprite(x, y, 'string');
-            }
-        } else {
-            newRect = game.add.sprite(x, y, 'string');
-            lastRect.bringToTop();
-        }
+        //Add string sprite
+        newRect = game.add.sprite(x,y,'string');
 
         //  Enable physicsbody
         game.physics.p2.enable(newRect, false);
@@ -238,7 +250,7 @@ function createRope(length, xAnchor,yAnchor) {
 }
 
 function Boost(){
-    kite.body.velocity.y+= -600/60;
+    kite.body.velocity.y+= -10;
 }
 
 
@@ -248,7 +260,7 @@ function yAcclCap(){
         kite.body.velocity.y=400;
     }
     else if (kite.body.velocity.y<-600){
-        kite.body.velocity.y=-600;      
+        kite.body.velocity.y=-600;
     }
 }
 
@@ -258,15 +270,15 @@ function xAcclCap(){
         kite.body.velocity.x=300;
     }
     else if (kite.body.velocity.x<-300){
-        kite.body.velocity.x=-300;      
+        kite.body.velocity.x=-300;
     }
 }
-        
 
-function collisionHandler(kite, powerUp){
+
+function collisionHandler(kite, powerUp) {
     powerUp.kill();
     kite.body.velocity.y=-350;
-}    
+}
 
 function yWindUpdate(){
     kite.body.velocity.y+=wind;
@@ -276,7 +288,13 @@ function xWindUpdate(){
     kite.body.velocity.x+=wind;
 }
 
-function altitudeUpdate(){
-    altitude = kite.y;
+function lose() {
+  if(kite.body.x >= 800 || kite.body.y >= 600)
+    game.add.text(300, 250, 'Game Over', { font: '25px Arial', fill: '#fff' });
+    // kite.kill(); // Not working
 }
 
+//
+function boundaryCollision() {
+  kite.body.collideWorldBounds = true;
+}
