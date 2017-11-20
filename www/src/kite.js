@@ -9,7 +9,8 @@ function preload() {
         game.load.image('bigClouds', 'assets/images/bg3.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-        game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
+        //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
+        game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60)
         game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
 
 }
@@ -37,7 +38,7 @@ function create() {
     game.physics.p2.gravity.y = 0;
 
     // Creating the kite
-    kite = game.add.sprite(135,135, 'kite');
+    kite = game.add.sprite(100, 100, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     // kite.body.collideWorldBounds = true;
@@ -62,7 +63,7 @@ function create() {
     game.input.addMoveCallback(move, this);
 
     // Sets up camera to follow the kite
-    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    // game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
@@ -78,7 +79,7 @@ function lock() {
 
 function update() {
 
-
+    lose();
     // tailReset();
     // kite.angle = 70    kite.angle = 7;;
     windUpVariance = Math.random()*10;
@@ -116,16 +117,16 @@ function update() {
     kite.body.velocity.y += 150/60;
 
     if (directional.left.isDown){
-      kite.body.velocity.x = -150;
+      kite.body.velocity.x = -75;
     }
     else if (directional.right.isDown){
-      kite.body.velocity.x = 150;
+      kite.body.velocity.x = 75;
     }
-    else if (directional.up.isDown){
-      kite.body.velocity.y = -150;
+    else if (directional.up.isDown || boost.isDown){
+      kite.body.velocity.y = -75;
     }
     else if (directional.down.isDown){
-      kite.body.velocity.y = 150;
+      kite.body.velocity.y = 75;
     }
 
 
@@ -140,15 +141,16 @@ function update() {
     //     kite.angle = 45;
     // }
 
-    if(boost.isDown)
-    {
-        Boost();
-    }
+    // if(boost.isDown)
+    // {
+    //     Boost();
+    // }
 
     // yWindUpdate();
     // xWindUpdate();
     // yAcclCap();
     // xAcclCap();
+
 
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 
@@ -251,6 +253,7 @@ function xWindUpdate(){
 }
 
 function lose() {
-  if(kite.body.position.y == game.world.height - 50)
-    game.add.text(game.world.width - 200, 10, 'Game Over', { font: '25px Arial', fill: '#fff' });
+  if(kite.body.x >= 800 || kite.body.y >= 600)
+    game.add.text(350, 300, 'Game Over', { font: '25px Arial', fill: '#fff' });
+    // kite.kill();
 }
