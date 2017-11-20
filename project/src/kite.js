@@ -1,4 +1,4 @@
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
 
 function preload() {
 
@@ -9,8 +9,7 @@ function preload() {
         game.load.image('bigClouds', 'assets/images/bg3.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-        //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
-        game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60)
+        game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
         game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
 
 }
@@ -22,6 +21,7 @@ var boost;
 var directional;
 var powerUp;
 var lastX;
+
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -39,7 +39,7 @@ function create() {
     game.physics.p2.gravity.y = 0;
 
     // Creating the kite
-    kite = game.add.sprite(100, 100, 'kite');
+    kite = game.add.sprite(135,135, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     // kite.body.collideWorldBounds = true;
@@ -65,7 +65,7 @@ function create() {
     game.input.onUp.add(onUp, this);
 
     // Sets up camera to follow the kite
-    // game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
@@ -78,9 +78,29 @@ function onUp() {
     kite.body.velocity.x += deltaX*.9;
 }
 
-function update() {
+function move(pointer, x, y, click) {
+    kite.body.velocity.x += 1002*game.input.activePointer.movementX;    
+}
 
-    lose();
+
+// function move(pointer, x, y, click) {
+//     kite.body.velocity.x += 5*game.input.mouse.event.movementX;
+// }
+
+
+// Locks your cursor into the kite so you can control it
+function lock() {
+    if(game.input.mouse.locked) {
+        game.input.mouse.releasePointerLock();
+        game.input.mouse.locked = false;
+    } else {
+        game.input.mouse.requestPointerLock();
+    }
+}
+
+function update() {
+    game.debug.pointer(game.input.activePointer);
+
     // tailReset();
     // kite.angle = 70    kite.angle = 7;;
     windUpVariance = Math.random()*10;
@@ -118,16 +138,16 @@ function update() {
     kite.body.velocity.y += 150/60;
 
     if (directional.left.isDown){
-      kite.body.velocity.x = -75;
+      kite.body.velocity.x = -150;
     }
     else if (directional.right.isDown){
-      kite.body.velocity.x = 75;
+      kite.body.velocity.x = 150;
     }
-    else if (directional.up.isDown || boost.isDown){
-      kite.body.velocity.y = -75;
+    else if (directional.up.isDown){
+      kite.body.velocity.y = -150;
     }
     else if (directional.down.isDown){
-      kite.body.velocity.y = 75;
+      kite.body.velocity.y = 150;
     }
 
 
@@ -142,16 +162,15 @@ function update() {
     //     kite.angle = 45;
     // }
 
-    // if(boost.isDown)
-    // {
-    //     Boost();
-    // }
+    if(boost.isDown)
+    {
+        Boost();
+    }
 
     // yWindUpdate();
     // xWindUpdate();
     // yAcclCap();
     // xAcclCap();
-
 
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 
@@ -159,10 +178,6 @@ function update() {
 
 }
 
-// Does not work
-function move(pointer, x, y, click) {
-    kite.body.velocity.x += 1.2*game.input.activePointer.movementX;
-}
 
 function createRope(length, xAnchor,yAnchor) {
     var height = 16;        //  Height for the physics body - your image height is 8px
@@ -248,7 +263,6 @@ function xWindUpdate(){
 }
 
 function lose() {
-  if(kite.body.x >= 800 || kite.body.y >= 600)
-    game.add.text(350, 300, 'Game Over', { font: '25px Arial', fill: '#fff' });
-    // kite.kill();
+  if(kite.body.position.y == game.world.height - 50)
+    game.add.text(game.world.width - 200, 10, 'Game Over', { font: '25px Arial', fill: '#fff' });
 }
