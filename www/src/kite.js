@@ -1,4 +1,4 @@
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
+  var game = new Phaser.Game(320, 570, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
 
 function preload() {
 
@@ -10,8 +10,9 @@ function preload() {
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
         //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
-        game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60)
-        game.load.spritesheet('powerUp','assets/images/powerup.png',76,76);
+        game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
+        game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
+        game.load.spritesheet('button', 'assets/images/button.gif', 100, 50);
 
 }
 
@@ -22,6 +23,7 @@ var boost;
 var directional;
 var powerUp;
 var lastX;
+var button;
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -32,21 +34,21 @@ var windUpVariance = 0;
 function create() {
 
     // Setting up the game
-    game.add.tileSprite(0, 0, 1500, 1500, 'bigClouds');
-    game.world.setBounds(0, 0, 1500, 1500);
+    game.add.tileSprite(0, 0, 320, 570, 'bigClouds');
+    game.world.setBounds(0, 0, 320, 570);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.p2.gravity.y = 0;
 
     // Creating the kite
-    kite = game.add.sprite(100, 100, 'kite');
+    kite = game.add.sprite(100, 140, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     // kite.body.collideWorldBounds = true;
     // kite.body.bounce.setTo(0.5, 0.5);
 
     // Creating the powerup
-    powerUp=game.add.sprite(400 ,160,'powerUp');
+    powerUp = game.add.sprite(100, 40,'powerUp');
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
@@ -64,11 +66,42 @@ function create() {
     game.input.onDown.add(onDown, this);
     game.input.onUp.add(onUp, this);
 
-    // Sets up camera to follow the kite
+
+    // Restart button
+    button = game.add.button(50, 50 , 'button', actionOnClick, this, 2, 1, 0);
+
+    button.onInputOver.add(over, this);
+    button.onInputOut.add(out, this);
+    button.onInputUp.add(up, this);
+
+    button.visible = false;
+
+    kite.body.collideWorldBounds = true;
+    kite.body.gravity.x = game.rnd.integerInRange(-50, 50);
+    kite.body.gravity.y = 100 + Math.random() * 100;
+    kite.body.bounce.setTo(0.9, 0.9);
+
+    // Sets up camera to follow the kite. We don't want this right?
     // game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
+function up() {
+    console.log('button up', arguments);
+}
+
+function over() {
+    console.log('button over');
+}
+
+function out() {
+    console.log('button out');
+}
+
+function actionOnClick () {
+    background.visible =! background.visible;
+
+}
 function onDown() {
     lastX = game.input.activePointer.x;
 }
@@ -81,6 +114,14 @@ function onUp() {
 function update() {
 
     lose();
+
+    if(!lose()) {
+      button.visible = false;
+    }
+
+    if(lose()) {
+      button.visible = true;
+    }
     // tailReset();
     // kite.angle = 70    kite.angle = 7;;
     windUpVariance = Math.random()*10;
@@ -234,7 +275,7 @@ function xAcclCap(){
 }
 
 
-function collisionHandler(kite, powerUp){
+function collisionHandler(kite, powerUp) {
     powerUp.kill();
     kite.body.velocity.y=-350;
 }
@@ -249,6 +290,11 @@ function xWindUpdate(){
 
 function lose() {
   if(kite.body.x >= 800 || kite.body.y >= 600)
-    game.add.text(350, 300, 'Game Over', { font: '25px Arial', fill: '#fff' });
-    // kite.kill();
+    game.add.text(300, 250, 'Game Over', { font: '25px Arial', fill: '#fff' });
+    // kite.kill(); // Not working
+}
+
+//
+function boundaryCollision() {
+  kite.body.collideWorldBounds = true;
 }
