@@ -20,6 +20,11 @@ var lives;
 var boost;
 var directional;
 var powerUp;
+var altitude;
+var altitudeString;
+var altitudeText;
+//var currentHeight;
+//var lastHeight=135;
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -55,6 +60,12 @@ function create() {
     lives = game.add.group();
     game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 
+    //displaying the altitude of kite
+    altitudeString= 'Current Altitude : ';
+    altitude = kite.y;
+    game.add.text(20,10, altitudeString + altitude, { font: '25px Arial', fill: '#fff' });
+
+
     // Setting up controls
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -81,6 +92,15 @@ function update() {
 
     // tailReset();
     // kite.angle = 70    kite.angle = 7;;
+
+
+    //altitude = altitude + (currentHeight - lastHeight);
+    altitudeUpdate();
+    
+
+
+
+
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 3;
@@ -254,5 +274,9 @@ function yWindUpdate(){
 
 function xWindUpdate(){
     kite.body.velocity.x+=wind;
+}
+
+function altitudeUpdate(){
+    altitude = kite.y;
 }
 
