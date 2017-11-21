@@ -1,4 +1,4 @@
-  var game = new Phaser.Game(320, 570, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
+  var game = new Phaser.Game(320, 560, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
 
 function preload() {
 
@@ -12,7 +12,7 @@ function preload() {
         //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
-        game.load.spritesheet('button', 'assets/images/button.gif', 100, 50);
+        //game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
 
 }
 
@@ -23,7 +23,9 @@ var boost;
 var directional;
 var powerUp;
 var lastX;
-var button;
+//var restartButton;
+var gameOverText;
+var playerIsAlive;
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -31,17 +33,18 @@ var wind = 0;
 var windUp = -10;
 var windUpVariance = 0;
 
+
 function create() {
 
     // Setting up the game
-    game.add.tileSprite(0, 0, 320, 570, 'bigClouds');
-    game.world.setBounds(0, 0, 320, 570);
+    game.add.tileSprite(0, 0, 320, 1500, 'bigClouds');
+    game.world.setBounds(0, 0, 320, 1500);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.p2.gravity.y = 0;
 
     // Creating the kite
-    kite = game.add.sprite(100, 140, 'kite');
+    kite = game.add.sprite(100, 1400, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     // kite.body.collideWorldBounds = true;
@@ -57,7 +60,7 @@ function create() {
 
     // Creating lives text
     lives = game.add.group();
-    game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
+    // game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 
     // Setting up controls
     directional= game.input.keyboard.createCursorKeys();
@@ -67,43 +70,46 @@ function create() {
     game.input.onUp.add(onUp, this);
 
 
-    // Restart button
-    button = game.add.button(50, 50 , 'button', actionOnClick, this, 2, 1, 0);
+    // Restart restartButton
+    //restartButton = game.add.button(50, 1100, 'restartButton', actionOnClick, this, 2, 1, 0);
 
-    button.onInputOver.add(over, this);
-    button.onInputOut.add(out, this);
-    button.onInputUp.add(up, this);
-
-    button.visible = false;
+    // restartButton.onInputOver.add(over, this);
+    // restartButton.onInputOut.add(out, this);
+    // restartButton.onInputUp.add(up, this);
+    //
+    // restartButton.visible = false;
 
     kite.body.collideWorldBounds = true;
     kite.body.gravity.x = game.rnd.integerInRange(-50, 50);
     kite.body.gravity.y = 100 + Math.random() * 100;
-    kite.body.bounce.setTo(0.9, 0.9);
 
-    // Sets up camera to follow the kite. We don't want this right?
-    // game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    // Camera
+
+    game.camera.y = 1400
+    //game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+
+    playerIsAlive = true;
 
 }
 
-function up() {
-    console.log('button up', arguments);
-}
-
-function over() {
-    console.log('button over');
-}
-
-function out() {
-    console.log('button out');
-}
+// function up() {
+//     console.log('button up', arguments);
+// }
+//
+// function over() {
+//     console.log('button over');
+// }
+//
+// function out() {
+//     console.log('button out');
+// }
 
 function actionOnClick () {
     background.visible =! background.visible;
 
 }
 function onDown() {
-    lastX = game.input.activePointer.x;
+  lastX = game.input.activePointer.x;
 }
 
 function onUp() {
@@ -112,16 +118,13 @@ function onUp() {
 }
 
 function update() {
-
-    lose();
-
-    if(!lose()) {
-      button.visible = false;
+    if(playerIsAlive == true && kite.body.y >= game.world.height - 30) {
+      lose();
     }
 
-    if(lose()) {
-      button.visible = true;
-    }
+
+
+
     // tailReset();
     // kite.angle = 70    kite.angle = 7;;
     windUpVariance = Math.random()*10;
@@ -200,6 +203,12 @@ function update() {
 
 }
 
+function render() {
+
+    game.debug.cameraInfo(game.camera, 32, 32);
+
+}
+
 // Does not work
 function move(pointer, x, y, click) {
     kite.body.velocity.x += 1.2*game.input.activePointer.movementX;
@@ -264,7 +273,6 @@ function yAcclCap(){
     }
 }
 
-
 function xAcclCap(){
     if(kite.body.velocity.x>300){
         kite.body.velocity.x=300;
@@ -289,10 +297,12 @@ function xWindUpdate(){
 }
 
 function lose() {
-  if(kite.body.x >= 800 || kite.body.y >= 600)
-    game.add.text(300, 250, 'Game Over', { font: '25px Arial', fill: '#fff' });
-    // kite.kill(); // Not working
-}
+    gameOverText = game.add.text(kite.x, kite.y - game.height / 2, 'Game Over', { font: '20px Arial', fill: '#fff' });
+    kite.kill();
+    playerIsAlive = false;
+
+    //restartButton.visible = true;
+  }
 
 //
 function boundaryCollision() {
