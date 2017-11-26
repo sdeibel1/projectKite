@@ -20,7 +20,7 @@ var kite;
 var lives;
 var boost;
 var directional;
-var powerUp;
+var powerUps;
 var lastX;
 //var restartButton;
 var gameOverText;
@@ -46,16 +46,22 @@ function create() {
     kite = game.add.sprite(game.world.centerX, game.world.height*.25, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
-    // kite.body.collideWorldBounds = true;
-    // kite.body.bounce.setTo(0.5, 0.5);
+    kite.body.collideWorldBounds = true;
+    kite.body.gravity.x = game.rnd.integerInRange(-50, 50);
+    kite.body.gravity.y = 100 + Math.random() * 100;
 
     // ********Creating the powerup********
     powerUp = game.add.sprite(game.world.centerX, game.world.height*.40,'powerUp');
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
+
     // ********Adds tail********
     //createRope(5,kite.x,kite.y+20);
+
+    // ********Collisions********
+    kite.body.createBodyCallback(powerUp, hitPowerup, this);
+    game.physics.p2.setImpactEvents(true);
 
     // ********Creating lives text********
     lives = game.add.group();
@@ -78,12 +84,7 @@ function create() {
     //
     // restartButton.visible = false;
 
-    kite.body.collideWorldBounds = true;
-    kite.body.gravity.x = game.rnd.integerInRange(-50, 50);
-    kite.body.gravity.y = 100 + Math.random() * 100;
-
     // ********Camera********
-
     //game.camera.y = 1400
     game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
@@ -305,4 +306,12 @@ function lose() {
 //
 function boundaryCollision() {
   kite.body.collideWorldBounds = true;
+}
+
+function hitPowerup(body1, body2) {
+    // body1 is the kite's body and body2 is the powerup's body
+    console.log("HITPOWERUP HAS BEEN REACHED");
+    body2.sprite.kill();
+    body1.velocity.y -= 300;
+    //body2.kill();
 }
