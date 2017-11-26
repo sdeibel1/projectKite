@@ -16,7 +16,6 @@ function preload() {
 
 }
 
-// Initializes all variables
 var kite;
 var lives;
 var boost;
@@ -36,41 +35,41 @@ var windUpVariance = 0;
 
 function create() {
 
-    // Setting up the game
+    // ********Setting up the game********
     game.add.tileSprite(0, 0, 320, 1500, 'bigClouds');
     game.world.setBounds(0, 0, 320, 1500);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.p2.gravity.y = 0;
 
-    // Creating the kite
-    kite = game.add.sprite(100, 1400, 'kite');
+    // ********Creating the kite********
+    kite = game.add.sprite(game.world.centerX, game.world.height*.25, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     // kite.body.collideWorldBounds = true;
     // kite.body.bounce.setTo(0.5, 0.5);
 
-    // Creating the powerup
-    powerUp = game.add.sprite(100, 40,'powerUp');
+    // ********Creating the powerup********
+    powerUp = game.add.sprite(game.world.centerX, game.world.height*.40,'powerUp');
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
-    //Adds tail
+    // ********Adds tail********
     //createRope(5,kite.x,kite.y+20);
 
-    // Creating lives text
+    // ********Creating lives text********
     lives = game.add.group();
     // game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
 
-    // Setting up controls
+    // ********Setting up controls********
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    game.input.addMoveCallback(move, this);
+    //game.input.addMoveCallback(move, this); **THIS DOESN'T WORK RIGHT NOW**
     game.input.onDown.add(onDown, this);
     game.input.onUp.add(onUp, this);
 
 
-    // Restart restartButton
+    // ********Restart restartButton********
     //restartButton = game.add.button(50, 1100, 'restartButton', actionOnClick, this, 2, 1, 0);
 
     // restartButton.onInputOver.add(over, this);
@@ -83,7 +82,7 @@ function create() {
     kite.body.gravity.x = game.rnd.integerInRange(-50, 50);
     kite.body.gravity.y = 100 + Math.random() * 100;
 
-    // Camera
+    // ********Camera********
 
     //game.camera.y = 1400
     game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -92,6 +91,7 @@ function create() {
 
 }
 
+// ********Button Controls********
 // function up() {
 //     console.log('button up', arguments);
 // }
@@ -122,11 +122,6 @@ function update() {
       lose();
     }
 
-
-
-
-    // tailReset();
-    // kite.angle = 70    kite.angle = 7;;
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 3;
@@ -223,17 +218,17 @@ function createRope(length, xAnchor,yAnchor) {
         var x = xAnchor;                    //  All rects are on the same x position
         var y = (yAnchor) - (i * height);     //  Every new rect is positioned below the last
 
-        //Add string sprite
+        // Add string sprite
         newRect = game.add.sprite(x,y,'string');
 
-        //  Enable physicsbody
+        // Enable physicsbody
         game.physics.p2.enable(newRect, false);
 
-        //  Set custom rectangle
+        // Set custom rectangle
         newRect.body.setRectangle(width, height);
 
         if (i === 0) {
-            //  Anchor the first one created
+            // Anchor the first one created
             newRect.body.static = false;
             game.physics.p2.createRevoluteConstraint(kite, [0,+70], newRect, [0,10],maxForce);
         } else {
