@@ -85,8 +85,8 @@ function create() {
 
     // Camera
 
-    game.camera.y = 1400
-    //game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    //game.camera.y = 1400
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
     playerIsAlive = true;
 
@@ -297,7 +297,10 @@ function xWindUpdate(){
 }
 
 function lose() {
-    gameOverText = game.add.text(kite.x, kite.y - game.height / 2, 'Game Over', { font: '20px Arial', fill: '#fff' });
+    console.log("CAMERA: " + game.camera.x, game.camera.height + "\nKITE: " + kite.x, kite.y);
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText.anchor.setTo(0.5);
+    console.log(gameOverText.x, gameOverText.y);
     kite.kill();
     playerIsAlive = false;
 
