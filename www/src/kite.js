@@ -6,7 +6,7 @@ function preload() {
 
     //testing out new bg
 
-        game.load.image('bigClouds', 'assets/images/bg3.jpg');
+        game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
         //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
@@ -17,14 +17,15 @@ function preload() {
 }
 
 var kite;
+var kiteCollisionGroup;
+var powerupCollisionGroup;
 var lives;
 var boost;
 var directional;
-var powerUps;
 var lastX;
 //var restartButton;
-var gameOverText;
 var playerIsAlive;
+var timer;
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -43,7 +44,7 @@ function create() {
     game.physics.p2.gravity.y = 0;
 
     // ********Creating the kite********
-    kite = game.add.sprite(game.world.centerX, game.world.height*.25, 'kite');
+    kite = game.add.sprite(game.world.centerX, game.world.height*.80, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     kite.body.collideWorldBounds = true;
@@ -51,8 +52,8 @@ function create() {
     kite.body.gravity.y = 100 + Math.random() * 100;
 
     // ********Creating the powerup********
-    //createPowerups(); // I was trying something out with this, can ignore but keep for now (Sebastian)
-    powerUp = game.add.sprite(game.world.centerX, game.world.height*.40,'powerUp');
+    // createPowerups(); // I was trying something out with this, can ignore but keep for now (Sebastian)
+    powerUp = game.add.sprite(game.world.centerX, game.world.height*.85,'powerUp');
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
@@ -61,8 +62,16 @@ function create() {
     //createRope(5,kite.x,kite.y+20);
 
     // ********Collisions********
+    kiteCollisionGroup = game.physics.p2.createCollisionGroup();
+    powerupCollisionGroup = game.physics.p2.createCollisionGroup();
+    kite.body.setCollisionGroup(kiteCollisionGroup);
+    powerUp.body.setCollisionGroup(powerupCollisionGroup);
+    kite.body.collides(powerupCollisionGroup);
+    powerUp.body.collides(kiteCollisionGroup);
+
     kite.body.createBodyCallback(powerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
+    game.physics.p2.updateBoundsCollisionGroup();
 
     // ********Creating lives text********
     lives = game.add.group();
@@ -91,6 +100,11 @@ function create() {
     game.camera.y = kite.y;
 
     playerIsAlive = true;
+
+    // ********Timer********
+    timer = game.time.create(false);
+    timer.loop(2500, createPowerup, this);
+    timer.start();
 
 }
 
@@ -125,12 +139,15 @@ function update() {
       lose();
     }
 
+    if (kite.body.y < game.camera.y) {
+        kite.body.y = game.camera.y;    
+    }
+
     if(playerIsAlive==true){
         CameraPan();
-
     }
     
-
+    if (kite.body.y)
 
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
@@ -219,13 +236,29 @@ function move(pointer, x, y, click) {
     kite.body.velocity.x += 1000*(game.input.activePointer.x - x);
 }
 
-function createPowerups() {
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
-            powerUp = game.add.sprite(game.world.width/5 + i*200, game.world.height*(.40 + i*.10),'powerUp');
-            powerUp.anchor.setTo(.5, .5);
-            game.physics.enable(powerUp, Phaser.Physics.P2JS);
-            kite.body.createBodyCallback(powerUp, hitPowerup, this);
+function createPowerup() {
+    var randomX = 1 + Math.random()*(game.world.width-2);
+    var randomX2 = 1 + Math.random()*(game.world.width-2);
+    var acceptableBelowYRange = (game.camera.y + game.camera.height) - kite.body.y - 50;
+    var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
+    var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
+    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 50;
+    var powerupsToAdd = [];
+
+//want between kite.y and camera.y+camera.height
+    if (playerIsAlive) {
+        powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
+        powerupsToAdd.push(powerUp);
+        if (kite.body.y - 50 >= game.camera.y) {
+            powerupsToAdd.push(powerUp2);
+        }
+        for (powerup of powerupsToAdd) {
+            powerup.anchor.setTo(.5, .5);
+            game.physics.enable(powerup, Phaser.Physics.P2JS);
+            powerup.body.setCollisionGroup(powerupCollisionGroup);
+            powerup.body.collides(kiteCollisionGroup);
+            kite.body.createBodyCallback(powerup, hitPowerup, this);
         }
     }
 }
@@ -314,7 +347,7 @@ function xWindUpdate(){
 
 function lose() {
     console.log("CAMERA: " + game.camera.x, game.camera.height + "\nKITE: " + kite.x, kite.y);
-    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    var gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
     console.log(gameOverText.x, gameOverText.y);
     kite.kill();
@@ -331,12 +364,11 @@ function boundaryCollision() {
 
 function hitPowerup(body1, body2) {
     // body1 is the kite's body and body2 is the powerup's body
-    console.log("HITPOWERUP HAS BEEN REACHED");
     body2.sprite.kill();
     if (body1.velocity.y > 0) {
-        body1.velocity.y = -300
+        body1.velocity.y = -250
     } else {
-        body1.velocity.y -= 300;
+        body1.velocity.y -= 170;
     }
     //body2.kill();
 }
