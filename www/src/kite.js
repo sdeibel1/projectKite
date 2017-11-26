@@ -68,10 +68,10 @@ function create() {
     powerUp.body.setCollisionGroup(powerupCollisionGroup);
     kite.body.collides(powerupCollisionGroup);
     powerUp.body.collides(kiteCollisionGroup);
-
+    game.physics.p2.updateBoundsCollisionGroup();
+    // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
     kite.body.createBodyCallback(powerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
-    game.physics.p2.updateBoundsCollisionGroup();
 
     // ********Creating lives text********
     lives = game.add.group();
@@ -236,24 +236,30 @@ function move(pointer, x, y, click) {
     kite.body.velocity.x += 1000*(game.input.activePointer.x - x);
 }
 
+// Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
 function createPowerup() {
+    // Calculating the positions for the powerups that will be created
     var randomX = 1 + Math.random()*(game.world.width-2);
     var randomX2 = 1 + Math.random()*(game.world.width-2);
     var acceptableBelowYRange = (game.camera.y + game.camera.height) - kite.body.y - 50;
     var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
     var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
     var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 50;
-    var powerupsToAdd = [];
+    var powerupsToCreate = [];
 
-//want between kite.y and camera.y+camera.height
     if (playerIsAlive) {
+        // this powerup will go below the kite (so that the player has a chance of getting it)
         powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        // this powerup will go above the kite 
         powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
-        powerupsToAdd.push(powerUp);
-        if (kite.body.y - 50 >= game.camera.y) {
-            powerupsToAdd.push(powerUp2);
+        powerupsToCreate.push(powerUp);
+        if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
+        /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
+        on top of the kite which ends up being confusing */
+            // add the above powerup to powerupsTo
+            powerupsToCreate.push(powerUp2);
         }
-        for (powerup of powerupsToAdd) {
+        for (powerup of powerupsToCreate) { // creates the powerups
             powerup.anchor.setTo(.5, .5);
             game.physics.enable(powerup, Phaser.Physics.P2JS);
             powerup.body.setCollisionGroup(powerupCollisionGroup);
