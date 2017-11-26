@@ -250,13 +250,13 @@ function createPowerup() {
     if (playerIsAlive) {
         // this powerup will go below the kite (so that the player has a chance of getting it)
         powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
-        // this powerup will go above the kite 
-        powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
         powerupsToCreate.push(powerUp);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
         /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
         on top of the kite which ends up being confusing */
             // add the above powerup to powerupsTo
+            // this powerup will go above the kite 
+            powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
             powerupsToCreate.push(powerUp2);
         }
         for (powerup of powerupsToCreate) { // creates the powerups
