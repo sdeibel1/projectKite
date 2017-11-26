@@ -87,7 +87,8 @@ function create() {
 
     // ********Camera********
     //game.camera.y = 1400
-    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    // game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    game.camera.y = kite.y;
 
     playerIsAlive = true;
 
@@ -120,9 +121,16 @@ function onUp() {
 }
 
 function update() {
-    if(playerIsAlive == true && kite.body.y >= game.world.height - 30) {
+    if(playerIsAlive == true && kite.body.y >= game.camera.y +550) {
       lose();
     }
+
+    if(playerIsAlive==true){
+        CameraPan();
+
+    }
+    
+
 
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
@@ -311,6 +319,7 @@ function lose() {
     console.log(gameOverText.x, gameOverText.y);
     kite.kill();
     playerIsAlive = false;
+    
 
     //restartButton.visible = true;
   }
@@ -331,3 +340,11 @@ function hitPowerup(body1, body2) {
     }
     //body2.kill();
 }
+
+
+function CameraPan(){
+
+ game.camera.y+=-2;
+}
+
+

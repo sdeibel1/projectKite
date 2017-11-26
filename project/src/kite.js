@@ -77,7 +77,7 @@ function create() {
     game.input.onUp.add(onUp, this);
 
     // Sets up camera to follow the kite
-    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+    // game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
 }
 
@@ -119,6 +119,8 @@ function update() {
 
     //altitude = altitude + (currentHeight - lastHeight);
     altitudeUpdate();
+    
+    CameraPan();
     
 
 
@@ -285,6 +287,13 @@ function xWindUpdate(){
 
 function altitudeUpdate(){
     altitude = kite.y;
+}
+
+
+
+function CameraPan(){
+
+ game.camera.y+=-2;
 }
 
 
