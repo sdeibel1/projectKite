@@ -51,6 +51,7 @@ function create() {
     kite.body.gravity.y = 100 + Math.random() * 100;
 
     // ********Creating the powerup********
+    //createPowerups(); // I was trying something out with this, can ignore but keep for now (Sebastian)
     powerUp = game.add.sprite(game.world.centerX, game.world.height*.40,'powerUp');
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
@@ -70,7 +71,7 @@ function create() {
     // ********Setting up controls********
     directional= game.input.keyboard.createCursorKeys();
     boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    //game.input.addMoveCallback(move, this); **THIS DOESN'T WORK RIGHT NOW**
+    //game.input.addMoveCallback(move, this); //**THIS DOESN'T WORK RIGHT NOW**
     game.input.onDown.add(onDown, this);
     game.input.onUp.add(onUp, this);
 
@@ -207,7 +208,18 @@ function render() {
 
 // Does not work
 function move(pointer, x, y, click) {
-    kite.body.velocity.x += 1.2*game.input.activePointer.movementX;
+    kite.body.velocity.x += 1000*(game.input.activePointer.x - x);
+}
+
+function createPowerups() {
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4; j++) {
+            powerUp = game.add.sprite(game.world.width/5 + i*200, game.world.height*(.40 + i*.10),'powerUp');
+            powerUp.anchor.setTo(.5, .5);
+            game.physics.enable(powerUp, Phaser.Physics.P2JS);
+            kite.body.createBodyCallback(powerUp, hitPowerup, this);
+        }
+    }
 }
 
 function createRope(length, xAnchor,yAnchor) {
@@ -312,6 +324,10 @@ function hitPowerup(body1, body2) {
     // body1 is the kite's body and body2 is the powerup's body
     console.log("HITPOWERUP HAS BEEN REACHED");
     body2.sprite.kill();
-    body1.velocity.y -= 300;
+    if (body1.velocity.y > 0) {
+        body1.velocity.y = -300
+    } else {
+        body1.velocity.y -= 300;
+    }
     //body2.kill();
 }
