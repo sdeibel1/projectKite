@@ -97,7 +97,9 @@ function create() {
 
 <<<<<<< HEAD
 
+=======
     // ********Restart restartButton********
+    //restartButton = game.add.button(50, 1100, 'restartButton', actionOnClick, this, 2, 1, 0);
     // restartButton.onInputOver.add(over, this);
     // restartButton.onInputOut.add(out, this);
     // restartButton.onInputUp.add(up, this);
