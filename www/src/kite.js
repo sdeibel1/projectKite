@@ -25,14 +25,10 @@ var directional;
 var lastX;
 var playerIsAlive;
 var timer;
-<<<<<<< HEAD
 var restartButton;
 var gameOverText;
 var powerupsToCreate = [];
-
-=======
 var altitude;
->>>>>>> 69e7607c37430aaa1c926c714c2e5c53d6cdcb41
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
@@ -74,7 +70,7 @@ function create() {
     powerUp.body.collides(kiteCollisionGroup);
     game.physics.p2.updateBoundsCollisionGroup();
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
-    kite.body.createBodyCallback(powerUp, hitPowerup, this); 
+    kite.body.createBodyCallback(powerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
 
     // ********Creating lives text********
@@ -95,17 +91,6 @@ function create() {
     game.input.onUp.add(onUp, this);
 
 
-<<<<<<< HEAD
-
-=======
-    // ********Restart restartButton********
-    //restartButton = game.add.button(50, 1100, 'restartButton', actionOnClick, this, 2, 1, 0);
-    // restartButton.onInputOver.add(over, this);
-    // restartButton.onInputOut.add(out, this);
-    // restartButton.onInputUp.add(up, this);
-    //
-    // restartButton.visible = false;
->>>>>>> 69e7607c37430aaa1c926c714c2e5c53d6cdcb41
 
     // ********Camera********
     //game.camera.y = 1400
@@ -169,13 +154,7 @@ function update() {
     if(playerIsAlive==true){
         CameraPan();
     }
-<<<<<<< HEAD
 
-    if (kite.body.y)
-
-=======
-    
->>>>>>> 69e7607c37430aaa1c926c714c2e5c53d6cdcb41
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 3;
@@ -241,17 +220,6 @@ function update() {
     // xAcclCap();
 
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
-<<<<<<< HEAD
-
-    // console.log(kite.x);
-    // console.log(kite.y);
-    //console.log(game.camera.x);
-    //console.log(game.camera.y);
-
-
-
-=======
->>>>>>> 69e7607c37430aaa1c926c714c2e5c53d6cdcb41
 }
 
 function render() {
@@ -384,7 +352,6 @@ function lose() {
     restartButton.onInputUp.add(up, this);
 
     kite.kill();
-<<<<<<< HEAD
     for (powerup of powerupsToCreate) {
       powerup.kill();
     }
@@ -393,10 +360,6 @@ function lose() {
     console.log(powerupsToCreate);
 
     playerIsAlive = false;
-=======
-    playerIsAlive = false;
-    //restartButton.visible = true;
->>>>>>> 69e7607c37430aaa1c926c714c2e5c53d6cdcb41
   }
 
 function boundaryCollision() {
