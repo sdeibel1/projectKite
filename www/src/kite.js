@@ -12,7 +12,7 @@ function preload() {
         //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
-        //game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
+        game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
 
 }
 
@@ -23,9 +23,11 @@ var lives;
 var boost;
 var directional;
 var lastX;
-//var restartButton;
 var playerIsAlive;
 var timer;
+var restartButton;
+var gameOverText;
+var powerupsToCreate = [];
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -85,14 +87,7 @@ function create() {
     game.input.onUp.add(onUp, this);
 
 
-    // ********Restart restartButton********
-    //restartButton = game.add.button(50, 1100, 'restartButton', actionOnClick, this, 2, 1, 0);
 
-    // restartButton.onInputOver.add(over, this);
-    // restartButton.onInputOut.add(out, this);
-    // restartButton.onInputUp.add(up, this);
-    //
-    // restartButton.visible = false;
 
     // ********Camera********
     //game.camera.y = 1400
@@ -108,23 +103,34 @@ function create() {
 
 }
 
-// ********Button Controls********
-// function up() {
-//     console.log('button up', arguments);
-// }
-//
-// function over() {
-//     console.log('button over');
-// }
-//
-// function out() {
-//     console.log('button out');
-// }
+//********Button Controls********
+function up() {
+}
+
+function over() {
+}
+
+function out() {
+}
 
 function actionOnClick () {
-    background.visible =! background.visible;
+    kite.revive();
+    restartButton.visible = false;
+    gameOverText.visible = false;
+    kite.body.x = game.world.centerX;
+    kite.body.y = game.world.height*.80;
+    kite.body.velocity.x = 0;
+    kite.body.velocity.y = 0;
+
+
+    game.camera.y = kite.body.y;
+
+
+
+    playerIsAlive = true;
 
 }
+
 function onDown() {
   lastX = game.input.activePointer.x;
 }
@@ -140,13 +146,13 @@ function update() {
     }
 
     if (kite.body.y < game.camera.y) {
-        kite.body.y = game.camera.y;    
+        kite.body.y = game.camera.y;
     }
 
     if(playerIsAlive==true){
         CameraPan();
     }
-    
+
     if (kite.body.y)
 
     windUpVariance = Math.random()*10;
@@ -221,6 +227,11 @@ function update() {
 
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 
+    // console.log(kite.x);
+    // console.log(kite.y);
+    //console.log(game.camera.x);
+    //console.log(game.camera.y);
+
 
 
 }
@@ -245,17 +256,17 @@ function createPowerup() {
     var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
     var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
     var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 50;
-    var powerupsToCreate = [];
 
     if (playerIsAlive) {
         // this powerup will go below the kite (so that the player has a chance of getting it)
         powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
         powerupsToCreate.push(powerUp);
+        console.log(powerupsToCreate);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
         /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
         on top of the kite which ends up being confusing */
             // add the above powerup to powerupsTo
-            // this powerup will go above the kite 
+            // this powerup will go above the kite
             powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
             powerupsToCreate.push(powerUp2);
         }
@@ -352,15 +363,24 @@ function xWindUpdate(){
 }
 
 function lose() {
-    console.log("CAMERA: " + game.camera.x, game.camera.height + "\nKITE: " + kite.x, kite.y);
-    var gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
-    console.log(gameOverText.x, gameOverText.y);
-    kite.kill();
-    playerIsAlive = false;
-    
 
-    //restartButton.visible = true;
+    // ********Restart restartButton********
+    restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 + 25, 'restartButton', actionOnClick, this, 2, 1, 0);
+    restartButton.onInputOver.add(over, this);
+    restartButton.onInputOut.add(out, this);
+    restartButton.onInputUp.add(up, this);
+
+    kite.kill();
+    for (powerup of powerupsToCreate) {
+      powerup.kill();
+    }
+    powerupsToCreate = [];
+
+    console.log(powerupsToCreate);
+
+    playerIsAlive = false;
   }
 
 //
@@ -384,5 +404,3 @@ function CameraPan(){
 
  game.camera.y+=-2;
 }
-
-
