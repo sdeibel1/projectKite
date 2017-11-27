@@ -26,11 +26,7 @@ var lastX;
 //var restartButton;
 var playerIsAlive;
 var timer;
-<<<<<<< HEAD
 var altitude;
-
-=======
->>>>>>> 9e290982a0425ace6a4ddef3a1511eba26640374
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
@@ -84,8 +80,6 @@ function create() {
     var altitudeString = game.add.text(0,0, 'Current Altitude : ' + altitude, {font: '19px Arial', fill: '#fff', align: "left"});
     altitudeString.fixedToCamera = true;
     altitudeString.cameraOffset.setTo(10,10);
-
-
 
     // ********Setting up controls********
     directional= game.input.keyboard.createCursorKeys();
@@ -202,14 +196,6 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
-<<<<<<< HEAD
-    
-
-
-
-
-=======
->>>>>>> 9e290982a0425ace6a4ddef3a1511eba26640374
     // kite.body.velocity.x += wind;
 
     // if(kite.body.velocity.x<0) {
@@ -230,8 +216,6 @@ function update() {
 
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 }
-
-
 
 function render() {
     game.debug.cameraInfo(game.camera, 32, 32);
