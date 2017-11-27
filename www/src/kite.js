@@ -1,4 +1,4 @@
-  var game = new Phaser.Game(320, 560, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
+var game = new Phaser.Game(320, 560, Phaser.AUTO, 'phaser-example',{ preload: preload, create: create, update: update}) ;
 
 function preload() {
 
@@ -26,19 +26,21 @@ var lastX;
 //var restartButton;
 var playerIsAlive;
 var timer;
+<<<<<<< HEAD
 var altitude;
 
+=======
+>>>>>>> 9e290982a0425ace6a4ddef3a1511eba26640374
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
 var windUp = -10;
 var windUpVariance = 0;
 
-
 function create() {
 
     // ********Setting up the game********
-    game.add.tileSprite(0, 0, 320, 1500, 'bigClouds');
+    var background = game.add.tileSprite(0, 0, 320, 1500, 'bigClouds');
     game.world.setBounds(0, 0, 320, 1500);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -58,7 +60,6 @@ function create() {
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
-
     // ********Adds tail********
     //createRope(5,kite.x,kite.y+20);
 
@@ -71,7 +72,7 @@ function create() {
     powerUp.body.collides(kiteCollisionGroup);
     game.physics.p2.updateBoundsCollisionGroup();
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
-    kite.body.createBodyCallback(powerUp, hitPowerup, this);
+    kite.body.createBodyCallback(powerUp, hitPowerup, this); 
     game.physics.p2.setImpactEvents(true);
 
     // ********Creating lives text********
@@ -96,7 +97,6 @@ function create() {
 
     // ********Restart restartButton********
     //restartButton = game.add.button(50, 1100, 'restartButton', actionOnClick, this, 2, 1, 0);
-
     // restartButton.onInputOver.add(over, this);
     // restartButton.onInputOut.add(out, this);
     // restartButton.onInputUp.add(up, this);
@@ -114,7 +114,6 @@ function create() {
     timer = game.time.create(false);
     timer.loop(2500, createPowerup, this);
     timer.start();
-
 }
 
 // ********Button Controls********
@@ -134,6 +133,7 @@ function actionOnClick () {
     background.visible =! background.visible;
 
 }
+
 function onDown() {
   lastX = game.input.activePointer.x;
 }
@@ -156,8 +156,6 @@ function update() {
         CameraPan();
     }
     
-    if (kite.body.y)
-
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 3;
@@ -184,7 +182,6 @@ function update() {
     // windUp += windUpVariance;
     //console.log(windUp);
 
-
     for (var i = 0; i < floatLinks.length; i++) {
         floatLinks[i].body.velocity.y = windUp;
         floatLinks[i].body.velocity.x += wind;
@@ -205,19 +202,19 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
+<<<<<<< HEAD
     
 
 
 
 
+=======
+>>>>>>> 9e290982a0425ace6a4ddef3a1511eba26640374
     // kite.body.velocity.x += wind;
 
-    // if(kite.body.velocity.x<0)
-    // {
+    // if(kite.body.velocity.x<0) {
     //     kite.angle = 135;
-
-    // }else if(kite.body.velocity.x>0){
-
+    // } else if(kite.body.velocity.x>0) {
     //     kite.angle = 45;
     // }
 
@@ -231,19 +228,13 @@ function update() {
     // yAcclCap();
     // xAcclCap();
 
-
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
-
-
-
 }
 
 
 
 function render() {
-
     game.debug.cameraInfo(game.camera, 32, 32);
-
 }
 
 // Does not work
@@ -323,16 +314,12 @@ function createRope(length, xAnchor,yAnchor) {
         }
 
         lastRect = newRect;
-
     }
-
 }
 
 function Boost(){
     kite.body.velocity.y+= -10;
 }
-
-
 
 function yAcclCap(){
     if(kite.body.velocity.y>400){
@@ -351,7 +338,6 @@ function xAcclCap(){
         kite.body.velocity.x=-300;
     }
 }
-
 
 function collisionHandler(kite, powerUp) {
     powerUp.kill();
@@ -373,14 +359,11 @@ function lose() {
     console.log(gameOverText.x, gameOverText.y);
     kite.kill();
     playerIsAlive = false;
-    
-
     //restartButton.visible = true;
   }
 
-//
 function boundaryCollision() {
-  kite.body.collideWorldBounds = true;
+    kite.body.collideWorldBounds = true;
 }
 
 function hitPowerup(body1, body2) {
@@ -394,10 +377,6 @@ function hitPowerup(body1, body2) {
     //body2.kill();
 }
 
-
 function CameraPan(){
-
- game.camera.y+=-2;
+    game.camera.y+=-2;
 }
-
-
