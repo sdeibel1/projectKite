@@ -26,6 +26,7 @@ var lastX;
 //var restartButton;
 var playerIsAlive;
 var timer;
+var altitude;
 
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -76,6 +77,14 @@ function create() {
     // ********Creating lives text********
     lives = game.add.group();
     // game.add.text(game.world.width - 200, 10, 'Lives : ', { font: '25px Arial', fill: '#fff' });
+
+    // ********Creating altitude text********
+    altitude = kite.y;
+    var altitudeString = game.add.text(0,0, 'Current Altitude : ' + altitude, {font: '19px Arial', fill: '#fff', align: "left"});
+    altitudeString.fixedToCamera = true;
+    altitudeString.cameraOffset.setTo(10,10);
+
+
 
     // ********Setting up controls********
     directional= game.input.keyboard.createCursorKeys();
@@ -196,6 +205,10 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
+    
+
+
+
 
     // kite.body.velocity.x += wind;
 
@@ -224,6 +237,8 @@ function update() {
 
 
 }
+
+
 
 function render() {
 
