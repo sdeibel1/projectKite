@@ -7,9 +7,8 @@ function preload() {
     //testing out new bg
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
+        game.load.image('black', 'assets/images/black.jpg', 320, 560);
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
-        //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
-        //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
@@ -34,11 +33,13 @@ var lastRect;
 var wind = 0;
 var windUp = -10;
 var windUpVariance = 0;
+var background;
+var altitudeString;
 
 function create() {
 
     // ********Setting up the game********
-    var background = game.add.tileSprite(0, 0, 320, 1500, 'bigClouds');
+    background = game.add.tileSprite(0, 0, 320, 1500, 'bigClouds');
     game.world.setBounds(0, 0, 320, 1500);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -48,7 +49,10 @@ function create() {
     kite = game.add.sprite(game.world.centerX, game.world.height*.80, 'kite');
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
-    kite.body.collideWorldBounds = true;
+
+    kite.checkWorldBounds = true;
+    kite.events.onOutOfBounds.add(kiteOut, this);
+
     kite.body.gravity.x = game.rnd.integerInRange(-50, 50);
     kite.body.gravity.y = 100 + Math.random() * 100;
 
@@ -79,7 +83,7 @@ function create() {
 
     // ********Creating altitude text********
     altitude = kite.y;
-    var altitudeString = game.add.text(0,0, 'Current Altitude : ' + altitude, {font: '19px Arial', fill: '#fff', align: "left"});
+    altitudeString = game.add.text(0,0, 'Current Altitude : ' + altitude, {font: '19px Arial', fill: '#fff', align: "left"});
     altitudeString.fixedToCamera = true;
     altitudeString.cameraOffset.setTo(10,10);
 
@@ -105,6 +109,17 @@ function create() {
     timer.start();
 }
 
+function kiteOut(alien) {
+
+    //  Move the alien to the top of the screen again
+    alien.reset(alien.x, 0);
+
+    //  And give it a new random velocity
+    alien.body.velocity.y = 50 + Math.random() * 200;
+
+}
+
+
 //********Button Controls********
 function up() {
 }
@@ -119,18 +134,18 @@ function actionOnClick () {
     kite.revive();
     restartButton.visible = false;
     gameOverText.visible = false;
+    black.visible = false;
+    background.visible = true;
+    altitudeString.visible = true;
+
     kite.body.x = game.world.centerX;
     kite.body.y = game.world.height*.80;
     kite.body.velocity.x = 0;
     kite.body.velocity.y = 0;
 
-
     game.camera.y = kite.body.y;
 
-
-
     playerIsAlive = true;
-
 }
 
 function onDown() {
@@ -342,14 +357,18 @@ function xWindUpdate(){
 }
 
 function lose() {
-    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 50, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
 
     // ********Restart restartButton********
-    restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 + 25, 'restartButton', actionOnClick, this, 2, 1, 0);
+    restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 25, 'restartButton', actionOnClick, this, 2, 1, 0);
     restartButton.onInputOver.add(over, this);
     restartButton.onInputOut.add(out, this);
     restartButton.onInputUp.add(up, this);
+
+    background.visible = false;
+    black = game.add.tileSprite(0, 0, 320, 560, 'black');
+    altitudeString.visible = false;
 
     kite.kill();
     for (powerup of powerupsToCreate) {
@@ -361,10 +380,6 @@ function lose() {
 
     playerIsAlive = false;
   }
-
-function boundaryCollision() {
-    kite.body.collideWorldBounds = true;
-}
 
 function hitPowerup(body1, body2) {
     // body1 is the kite's body and body2 is the powerup's body
