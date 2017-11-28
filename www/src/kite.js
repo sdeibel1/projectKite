@@ -36,17 +36,11 @@ var lastRect;
 var wind = 0;
 var windUp = -10;
 var windUpVariance = 0;
-<<<<<<< HEAD
+var altitudeString;
 var background;
-var altitudeString;
-=======
-var altitudeString;
-
 
 var powerUpScaleRatio = window.devicePixelRatio / 3;
 var kiteScaleRatio = window.devicePixelRatio / 4;
-
->>>>>>> 4d1affbc50a69ac949ea993e4eb9dc747c757299
 
 function create() {
 
@@ -238,7 +232,7 @@ function update() {
 
 
 
-    
+
 
 
 
