@@ -143,7 +143,7 @@ function actionOnClick () {
 }
 
 function onDown() {
-  lastX = game.input.activePointer.x;
+    lastX = game.input.activePointer.x;
 }
 
 function onUp() {
@@ -152,6 +152,9 @@ function onUp() {
 }
 
 function update() {
+
+    updateKiteAngle();
+
     if(playerIsAlive == true && kite.body.y >= game.camera.y +550) {
       lose();
     }
@@ -160,26 +163,23 @@ function update() {
         kite.body.y = game.camera.y;
     }
 
-    if(playerIsAlive==true){
+    if(playerIsAlive == true){
         CameraPan();
     }
 
-    kite.body.velocity.y += 150/60;
+    kite.body.velocity.y += 2.5;
 
-    if (directional.left.isDown){
+    if (directional.left.isDown ) {
       kite.body.velocity.x = -75;
-    }
-    else if (directional.right.isDown){
+    } else if (directional.right.isDown) {
       kite.body.velocity.x = 75;
-    }
-    else if (directional.up.isDown || boost.isDown){
+    } else if (directional.up.isDown || boost.isDown) {
       kite.body.velocity.y = -75;
-    }
-    else if (directional.down.isDown){
+    } else if (directional.down.isDown) {
       kite.body.velocity.y = 75;
     }
 
-   altitudeString.setText("Current Altitude : " + kite.body.y);
+   altitudeString.setText("Current Altitude : " + 0);
 }
 
 function render() {
@@ -188,11 +188,11 @@ function render() {
 
 // Does not work
 function move(pointer, x, y, click) {
-    kite.body.velocity.x += 1000*(game.input.activePointer.x - x);
+    kite.body.velocity.x += 1000 * (game.input.activePointer.x - x);
 }
 
 // updates the altitude
-function updateAltitude(){
+function updateAltitude() {
     altitude = kite.body.y;
     altitudeString.setText("Current Altitude : " + altitude);
 }
@@ -224,6 +224,7 @@ function createPowerup() {
 
             powerupsToCreate.push(powerUp2);
         }
+
         for (powerup of powerupsToCreate) { // creates the powerups
             powerup.anchor.setTo(.5, .5);
             game.physics.enable(powerup, Phaser.Physics.P2JS);
@@ -283,8 +284,7 @@ function Boost(){
 function yAcclCap(){
     if(kite.body.velocity.y>400){
         kite.body.velocity.y=400;
-    }
-    else if (kite.body.velocity.y<-600){
+    } else if (kite.body.velocity.y<-600){
         kite.body.velocity.y=-600;
     }
 }
@@ -292,8 +292,7 @@ function yAcclCap(){
 function xAcclCap(){
     if(kite.body.velocity.x>300){
         kite.body.velocity.x=300;
-    }
-    else if (kite.body.velocity.x<-300){
+    } else if (kite.body.velocity.x<-300){
         kite.body.velocity.x=-300;
     }
 }
@@ -325,27 +324,38 @@ function lose() {
     black = game.add.tileSprite(0, 0, 320, 560, 'black');
     altitudeString.visible = false;
 
+    // Kill everything
     kite.kill();
     for (powerup of powerupsToCreate) {
-      powerup.kill();
+        powerup.kill();
     }
     powerupsToCreate = [];
-
-    console.log(powerupsToCreate);
-
     playerIsAlive = false;
   }
 
-function hitPowerup(body1, body2) {
+function hitPowerup(kiteBody, powerupBody) {
     // body1 is the kite's body and body2 is the powerup's body
-    body2.sprite.kill();
-    if (body1.velocity.y > 0) {
-        body1.velocity.y = -250
+    powerupBody.sprite.kill();
+    if (kiteBody.velocity.y > 0) {
+        kiteBody.velocity.y = -250
     } else {
-        body1.velocity.y -= 170;
+        kiteBody.velocity.y -= 170;
     }
 }
 
 function CameraPan(){
-    game.camera.y+=-2;
+    game.camera.y  +=-2;
+}
+
+function updateKiteAngle(){
+         if(kite.body.angle>45){
+            kite.body.angle=45;
+        }
+
+
+        if(kite.body.angle<-45){
+            kite.body.angle=-45;
+        }
+
+        kite.body.angle = kite.body.velocity.x/8;
 }
