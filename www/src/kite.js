@@ -6,6 +6,9 @@ function preload() {
 
     //testing out new bg
 
+        //scaling window for all devices
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
@@ -35,6 +38,11 @@ var wind = 0;
 var windUp = -10;
 var windUpVariance = 0;
 
+
+var powerUpScaleRatio = window.devicePixelRatio / 3;
+var kiteScaleRatio = window.devicePixelRatio / 4;
+
+
 function create() {
 
     // ********Setting up the game********
@@ -46,6 +54,9 @@ function create() {
 
     // ********Creating the kite********
     kite = game.add.sprite(game.world.centerX, game.world.height*.80, 'kite');
+    //scales kite sprite for all devices
+    kite.scale.setTo(kiteScaleRatio, kiteScaleRatio);
+
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     kite.body.collideWorldBounds = true;
@@ -55,6 +66,9 @@ function create() {
     // ********Creating the powerup********
     // createPowerups(); // I was trying something out with this, can ignore but keep for now (Sebastian)
     powerUp = game.add.sprite(game.world.centerX, game.world.height*.85,'powerUp');
+    //scales powerup sprite for all devices
+    powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
@@ -244,6 +258,8 @@ function createPowerup() {
     if (playerIsAlive) {
         // this powerup will go below the kite (so that the player has a chance of getting it)
         powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
         powerupsToCreate.push(powerUp);
         console.log(powerupsToCreate);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
@@ -252,6 +268,8 @@ function createPowerup() {
             // add the above powerup to powerupsTo
             // this powerup will go above the kite
             powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
+            powerUp2.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
             powerupsToCreate.push(powerUp2);
         }
         for (powerup of powerupsToCreate) { // creates the powerups
