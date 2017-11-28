@@ -98,9 +98,9 @@ function create() {
     timer.start();
 }
 
-function kiteOut(alien) {
+function kiteOut(kite) {
     //  Move the alien to the top of the screen again
-    alien.reset(alien.x, 0);
+    kite.reset(kite.y, 0);
 
     //  And give it a new random velocity
     alien.body.velocity.y = 50 + Math.random() * 200;
@@ -134,6 +134,8 @@ function actionOnClick () {
     playerIsAlive = true;
 }
 
+
+//******* Movement Controls ***********
 function onDown() {
     lastX = game.input.activePointer.x;
 }
