@@ -6,13 +6,16 @@ function preload() {
 
     //testing out new bg
 
+        //scaling window for all devices
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         //game.load.spritesheet('chain', 'assets/images/chain.png', 16, 26);
         //game.load.spritesheet('kite', 'assets/images/kite2.png', 135, 135);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
-        //game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
+        game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
 
 }
 
@@ -23,15 +26,23 @@ var lives;
 var boost;
 var directional;
 var lastX;
-//var restartButton;
 var playerIsAlive;
 var timer;
+var restartButton;
+var gameOverText;
+var powerupsToCreate = [];
 var altitude;
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
 var windUp = -10;
 var windUpVariance = 0;
+var altitudeString;
+
+
+var powerUpScaleRatio = window.devicePixelRatio / 3;
+var kiteScaleRatio = window.devicePixelRatio / 4;
+
 
 function create() {
 
@@ -44,6 +55,9 @@ function create() {
 
     // ********Creating the kite********
     kite = game.add.sprite(game.world.centerX, game.world.height*.80, 'kite');
+    //scales kite sprite for all devices
+    kite.scale.setTo(kiteScaleRatio, kiteScaleRatio);
+
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
     kite.body.collideWorldBounds = true;
@@ -53,6 +67,9 @@ function create() {
     // ********Creating the powerup********
     // createPowerups(); // I was trying something out with this, can ignore but keep for now (Sebastian)
     powerUp = game.add.sprite(game.world.centerX, game.world.height*.85,'powerUp');
+    //scales powerup sprite for all devices
+    powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
@@ -68,7 +85,7 @@ function create() {
     powerUp.body.collides(kiteCollisionGroup);
     game.physics.p2.updateBoundsCollisionGroup();
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
-    kite.body.createBodyCallback(powerUp, hitPowerup, this); 
+    kite.body.createBodyCallback(powerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
 
     // ********Creating lives text********
@@ -77,11 +94,9 @@ function create() {
 
     // ********Creating altitude text********
     altitude = kite.y;
-    var altitudeString = game.add.text(0,0, 'Current Altitude : ' + altitude, {font: '19px Arial', fill: '#fff', align: "left"});
+    altitudeString = game.add.text(0,0, 'Current Altitude : ' + altitude, {font: '19px Arial', fill: '#fff', align: "left"});
     altitudeString.fixedToCamera = true;
     altitudeString.cameraOffset.setTo(10,10);
-
-
 
     // ********Setting up controls********
     directional= game.input.keyboard.createCursorKeys();
@@ -91,13 +106,6 @@ function create() {
     game.input.onUp.add(onUp, this);
 
 
-    // ********Restart restartButton********
-    //restartButton = game.add.button(50, 1100, 'restartButton', actionOnClick, this, 2, 1, 0);
-    // restartButton.onInputOver.add(over, this);
-    // restartButton.onInputOut.add(out, this);
-    // restartButton.onInputUp.add(up, this);
-    //
-    // restartButton.visible = false;
 
     // ********Camera********
     //game.camera.y = 1400
@@ -112,21 +120,31 @@ function create() {
     timer.start();
 }
 
-// ********Button Controls********
-// function up() {
-//     console.log('button up', arguments);
-// }
-//
-// function over() {
-//     console.log('button over');
-// }
-//
-// function out() {
-//     console.log('button out');
-// }
+//********Button Controls********
+function up() {
+}
+
+function over() {
+}
+
+function out() {
+}
 
 function actionOnClick () {
-    background.visible =! background.visible;
+    kite.revive();
+    restartButton.visible = false;
+    gameOverText.visible = false;
+    kite.body.x = game.world.centerX;
+    kite.body.y = game.world.height*.80;
+    kite.body.velocity.x = 0;
+    kite.body.velocity.y = 0;
+
+
+    game.camera.y = kite.body.y;
+
+
+
+    playerIsAlive = true;
 
 }
 
@@ -145,13 +163,13 @@ function update() {
     }
 
     if (kite.body.y < game.camera.y) {
-        kite.body.y = game.camera.y;    
+        kite.body.y = game.camera.y;
     }
 
     if(playerIsAlive==true){
         CameraPan();
     }
-    
+
     windUpVariance = Math.random()*10;
     if (windUpVariance <= 2) {
         windUp -= 3;
@@ -198,6 +216,9 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
+   altitudeString.setText("Current Altitude : " + kite.body.y);
+
+
 
     
 
@@ -225,8 +246,6 @@ function update() {
     // game.physics.P2JS.overlap(kite, powerUp, collisionHandler, false, this);
 }
 
-
-
 function render() {
     game.debug.cameraInfo(game.camera, 32, 32);
 }
@@ -234,6 +253,12 @@ function render() {
 // Does not work
 function move(pointer, x, y, click) {
     kite.body.velocity.x += 1000*(game.input.activePointer.x - x);
+}
+
+// updates the altitude
+function updateAltitude(){
+    altitude = kite.body.y;
+    altitudeString.setText("Current Altitude : " + altitude);
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
@@ -245,18 +270,22 @@ function createPowerup() {
     var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
     var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
     var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 50;
-    var powerupsToCreate = [];
 
     if (playerIsAlive) {
         // this powerup will go below the kite (so that the player has a chance of getting it)
         powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
         powerupsToCreate.push(powerUp);
+        console.log(powerupsToCreate);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
         /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
         on top of the kite which ends up being confusing */
             // add the above powerup to powerupsTo
-            // this powerup will go above the kite 
+            // this powerup will go above the kite
             powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
+            powerUp2.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
             powerupsToCreate.push(powerUp2);
         }
         for (powerup of powerupsToCreate) { // creates the powerups
@@ -347,13 +376,24 @@ function xWindUpdate(){
 }
 
 function lose() {
-    console.log("CAMERA: " + game.camera.x, game.camera.height + "\nKITE: " + kite.x, kite.y);
-    var gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
-    console.log(gameOverText.x, gameOverText.y);
+
+    // ********Restart restartButton********
+    restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 + 25, 'restartButton', actionOnClick, this, 2, 1, 0);
+    restartButton.onInputOver.add(over, this);
+    restartButton.onInputOut.add(out, this);
+    restartButton.onInputUp.add(up, this);
+
     kite.kill();
+    for (powerup of powerupsToCreate) {
+      powerup.kill();
+    }
+    powerupsToCreate = [];
+
+    console.log(powerupsToCreate);
+
     playerIsAlive = false;
-    //restartButton.visible = true;
   }
 
 function boundaryCollision() {
