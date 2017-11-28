@@ -144,6 +144,9 @@ function onUp() {
 }
 
 function update() {
+
+    updateKiteAngle();
+
     if(playerIsAlive == true && kite.body.y >= game.camera.y +550) {
       lose();
     }
@@ -334,4 +337,17 @@ function hitPowerup(kiteBody, powerupBody) {
 
 function CameraPan(){
     game.camera.y  +=-2;
+}
+
+function updateKiteAngle(){
+         if(kite.body.angle>45){
+            kite.body.angle=45;
+        }
+
+
+        if(kite.body.angle<-45){
+            kite.body.angle=-45;
+        }
+
+        kite.body.angle = kite.body.velocity.x/8;
 }
