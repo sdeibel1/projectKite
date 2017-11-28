@@ -28,11 +28,19 @@ var powerupsToCreate = [];
 var altitude;
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
+var wind = 0;
+var windUp = -10;
+var windUpVariance = 0;
+var background;
+var altitudeString;
+var altitudeString;
+
 var altitudeString;
 var background;
 
 var powerUpScaleRatio = window.devicePixelRatio / 3;
 var kiteScaleRatio = window.devicePixelRatio / 4;
+
 
 function create() {
 
@@ -146,6 +154,9 @@ function onUp() {
 }
 
 function update() {
+
+    updateKiteAngle();
+
     if(playerIsAlive == true && kite.body.y >= game.camera.y +550) {
       lose();
     }
@@ -336,4 +347,17 @@ function hitPowerup(kiteBody, powerupBody) {
 
 function CameraPan(){
     game.camera.y  +=-2;
+}
+
+function updateKiteAngle(){
+         if(kite.body.angle>45){
+            kite.body.angle=45;
+        }
+
+
+        if(kite.body.angle<-45){
+            kite.body.angle=-45;
+        }
+
+        kite.body.angle = kite.body.velocity.x/8;
 }
