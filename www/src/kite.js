@@ -25,6 +25,7 @@ var timer;
 var restartButton;
 var gameOverText;
 var powerupsToCreate = [];
+var powerups = [];
 var altitude;
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
@@ -154,6 +155,7 @@ function onUp() {
 }
 
 function update() {
+    background.tilePosition.y += 2;
 
     updateKiteAngle();
 
@@ -166,7 +168,13 @@ function update() {
     }
 
     if(playerIsAlive == true){
-        CameraPan();
+        //CameraPan();
+    }
+
+    for (powerup of powerups) {
+        if (powerup.body.velocity.y <= 20) {
+            powerup.kill();
+        }
     }
 
     kite.body.velocity.y += 2.5;
@@ -215,6 +223,7 @@ function createPowerup() {
         powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
         powerupsToCreate.push(powerUp);
+        powerups.push(powerUp);
         console.log(powerupsToCreate);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
         /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
@@ -225,16 +234,20 @@ function createPowerup() {
             powerUp2.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
             powerupsToCreate.push(powerUp2);
+            powerups.push(powerUp2);
         }
 
         for (powerup of powerupsToCreate) { // creates the powerups
             powerup.anchor.setTo(.5, .5);
             game.physics.enable(powerup, Phaser.Physics.P2JS);
+            powerup.body.velocity.y = 80;
+            powerup.checkWorldBounds = true;
             powerup.body.setCollisionGroup(powerupCollisionGroup);
             powerup.body.collides(kiteCollisionGroup);
             kite.body.createBodyCallback(powerup, hitPowerup, this);
         }
     }
+    powerupsToCreate = [];
 }
 
 function createRope(length, xAnchor,yAnchor) {
@@ -328,7 +341,7 @@ function lose() {
 
     // Kill everything
     kite.kill();
-    for (powerup of powerupsToCreate) {
+    for (powerup of powerups) {
         powerup.kill();
     }
     powerupsToCreate = [];
