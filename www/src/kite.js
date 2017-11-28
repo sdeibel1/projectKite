@@ -6,6 +6,9 @@ function preload() {
 
     //testing out new bg
 
+        //scaling window for all devices
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.image('black', 'assets/images/black.jpg', 320, 560);
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
@@ -33,8 +36,17 @@ var lastRect;
 var wind = 0;
 var windUp = -10;
 var windUpVariance = 0;
+<<<<<<< HEAD
 var background;
 var altitudeString;
+=======
+var altitudeString;
+
+
+var powerUpScaleRatio = window.devicePixelRatio / 3;
+var kiteScaleRatio = window.devicePixelRatio / 4;
+
+>>>>>>> 4d1affbc50a69ac949ea993e4eb9dc747c757299
 
 function create() {
 
@@ -47,6 +59,9 @@ function create() {
 
     // ********Creating the kite********
     kite = game.add.sprite(game.world.centerX, game.world.height*.80, 'kite');
+    //scales kite sprite for all devices
+    kite.scale.setTo(kiteScaleRatio, kiteScaleRatio);
+
     kite.anchor.setTo(0,0);
     game.physics.enable(kite, Phaser.Physics.P2JS);
 
@@ -59,6 +74,9 @@ function create() {
     // ********Creating the powerup********
     // createPowerups(); // I was trying something out with this, can ignore but keep for now (Sebastian)
     powerUp = game.add.sprite(game.world.centerX, game.world.height*.85,'powerUp');
+    //scales powerup sprite for all devices
+    powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
     powerUp.anchor.setTo(1,1);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
 
@@ -216,6 +234,15 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
+   altitudeString.setText("Current Altitude : " + kite.body.y);
+
+
+
+    
+
+
+
+
     // kite.body.velocity.x += wind;
 
     // if(kite.body.velocity.x<0) {
@@ -246,6 +273,12 @@ function move(pointer, x, y, click) {
     kite.body.velocity.x += 1000*(game.input.activePointer.x - x);
 }
 
+// updates the altitude
+function updateAltitude(){
+    altitude = kite.body.y;
+    altitudeString.setText("Current Altitude : " + altitude);
+}
+
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
 function createPowerup() {
     // Calculating the positions for the powerups that will be created
@@ -259,6 +292,8 @@ function createPowerup() {
     if (playerIsAlive) {
         // this powerup will go below the kite (so that the player has a chance of getting it)
         powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
         powerupsToCreate.push(powerUp);
         console.log(powerupsToCreate);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
@@ -267,6 +302,8 @@ function createPowerup() {
             // add the above powerup to powerupsTo
             // this powerup will go above the kite
             powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
+            powerUp2.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+
             powerupsToCreate.push(powerUp2);
         }
         for (powerup of powerupsToCreate) { // creates the powerups
