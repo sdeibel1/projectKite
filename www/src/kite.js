@@ -26,11 +26,7 @@ var lastX;
 //var restartButton;
 var playerIsAlive;
 var timer;
-<<<<<<< HEAD
 var altitude;
-
-=======
->>>>>>> 9e290982a0425ace6a4ddef3a1511eba26640374
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
@@ -202,14 +198,12 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
-<<<<<<< HEAD
+
     
 
 
 
 
-=======
->>>>>>> 9e290982a0425ace6a4ddef3a1511eba26640374
     // kite.body.velocity.x += wind;
 
     // if(kite.body.velocity.x<0) {
