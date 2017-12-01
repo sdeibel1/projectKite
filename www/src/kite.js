@@ -22,6 +22,7 @@ var lastX;
 var kite;
 var playerIsAlive;
 var timer;
+var timer2;
 var restartButton;
 var gameOverText;
 var powerupsToCreate = [];
@@ -40,8 +41,8 @@ var altitudeString;
 var altitudeString;
 var background;
 
-var powerUpScaleRatio = window.devicePixelRatio / 3;
-var kiteScaleRatio = window.devicePixelRatio / 4;
+var powerUpScaleRatio = window.devicePixelRatio / 2;
+var kiteScaleRatio = window.devicePixelRatio / 2;
 
 
 function create() {
@@ -104,6 +105,7 @@ function create() {
 
     // ********Camera********
     game.camera.y = kite.y;
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1); //comment this out to go back to the old camera
 
     playerIsAlive = true;
 
@@ -111,6 +113,9 @@ function create() {
     timer = game.time.create(false);
     timer.loop(2500, createPowerup, this);
     timer.start();
+
+    timer2 = game.time.create(false);
+    // timer2.add(500, game.camera.unfollow, this);
 }
 
 function kiteOut(kite) {
@@ -170,7 +175,8 @@ function update() {
     }
 
     if (kite.body.y < game.camera.y) {
-        kite.body.y = game.camera.y;
+        //kite.body.y = game.camera.y; //recomment this line to go back to old camera
+        catchUpToKite();
     }
 
 
@@ -391,4 +397,13 @@ function updateKiteAngle(){
         }
 
         kite.body.angle = kite.body.velocity.x/8;
+}
+
+function catchUpToKite() {
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1);
+    timer2.start();
+}
+
+function unfollowKite() {
+    game.camera.unfollow();
 }
