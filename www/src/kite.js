@@ -19,6 +19,8 @@ var boost;
 var directional;
 var lastX;
 
+var cameraYmin;
+
 var kite;
 var playerIsAlive;
 var timer;
@@ -155,6 +157,7 @@ function onUp() {
 }
 
 function update() {
+
     background.tilePosition.y += 2;
 
     updateKiteAngle();
@@ -374,3 +377,6 @@ function updateKiteAngle(){
 
         kite.body.angle = kite.body.velocity.x/8;
 }
+
+
+
