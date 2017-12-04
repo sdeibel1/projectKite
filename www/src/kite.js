@@ -22,6 +22,10 @@ var lastX;
 var cameraYmin;
 
 var kite;
+var kiteStartingX;
+var kiteStartingY;
+var score = 0;
+
 var playerIsAlive;
 var timer;
 var timer2;
@@ -36,12 +40,11 @@ var wind = 0;
 var powerUp;
 var windUp = -10;
 var windUpVariance = 0;
-var background;
-var altitudeString;
-var altitudeString;
+var scoreText;
 
-var altitudeString;
 var background;
+var heightBound = 10000;
+var widthBound = 360;
 
 var powerUpScaleRatio = window.devicePixelRatio / 2;
 var kiteScaleRatio = window.devicePixelRatio / 2;
@@ -50,14 +53,17 @@ var kiteScaleRatio = window.devicePixelRatio / 2;
 function create() {
 
     // ********Setting up the game********
-    background = game.add.tileSprite(0, 0, 360, 10000, 'bigClouds');
+    background = game.add.tileSprite(0, 0, widthBound, heightBound, 'bigClouds');
     game.world.setBounds(0, 0, 360, 10000);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.p2.gravity.y = 0;
 
     // ********Creating the kite********
-    kite = game.add.sprite(game.world.centerX, game.world.height*.80, 'kite');
+    kiteStartingX = game.world.centerX;
+    kiteStartingY = game.world.height*.80;
+
+    kite = game.add.sprite(kiteStartingX, kiteStartingY, 'kite');
     //scales kite sprite for all devices
     kite.scale.setTo(kiteScaleRatio, kiteScaleRatio);
     kite.anchor.setTo(0.5, 0.5);
@@ -94,10 +100,10 @@ function create() {
     game.physics.p2.setImpactEvents(true);
 
     // ********Creating altitude text********
-    altitude = kite.y;
-    altitudeString = game.add.text(0,0, 'Current Altitude : ' + altitude, {font: '19px Arial', fill: '#fff', align: "left"});
-    altitudeString.fixedToCamera = true;
-    altitudeString.cameraOffset.setTo(10,10);
+    altitude =  Math.round(kiteStartingY - kite.body.y);
+    scoreText = game.add.text(0, 0, score + " ft", {font: '19px Arial', fill: '#fff', align: "left"});
+    scoreText.fixedToCamera = true;
+    scoreText.cameraOffset.setTo(widthBound - 50, 10);
 
     // ********Setting up controls********
     directional= game.input.keyboard.createCursorKeys();
@@ -145,7 +151,7 @@ function actionOnClick () {
     gameOverText.visible = false;
     black.visible = false;
     background.visible = true;
-    altitudeString.visible = true;
+    scoreText.visible = true;
 
     kite.body.x = game.world.centerX;
     kite.body.y = game.world.height*.80;
@@ -192,7 +198,7 @@ function update() {
         }
     }
 
-    kite.body.velocity.y += 2.5;
+    kite.body.velocity.y += 2.5; // Gravity
 
     if (directional.left.isDown ) {
       kite.body.velocity.x = -75;
@@ -204,7 +210,11 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
-   altitudeString.setText("Current Altitude : " + 0);
+   altitude =  Math.round(kiteStartingY - kite.body.y);
+   if(altitude >= score) {
+     score = altitude;
+   }
+   scoreText.setText(score + " ft");
 
    game.world.wrap(kite.body, 10);
 }
@@ -216,12 +226,6 @@ function render() {
 // Does not work
 function move(pointer, x, y, click) {
     kite.body.velocity.x += 1000 * (game.input.activePointer.x - x);
-}
-
-// updates the altitude
-function updateAltitude() {
-    altitude = kite.body.y;
-    altitudeString.setText("Current Altitude : " + altitude);
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
@@ -354,7 +358,7 @@ function lose() {
 
     background.visible = false;
     black = game.add.tileSprite(0, 0, 320, 560, 'black');
-    altitudeString.visible = false;
+    scoreText.visible = false;
 
     powerUp.kill();
 
