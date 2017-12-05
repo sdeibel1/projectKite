@@ -42,8 +42,6 @@ var windUpVariance = 0;
 var scoreText;
 
 var background;
-var heightBound = 10000;
-var widthBound = 360;
 
 var powerUpScaleRatio = window.devicePixelRatio / 2;
 var kiteScaleRatio = window.devicePixelRatio / 2;
@@ -52,11 +50,12 @@ var kiteScaleRatio = window.devicePixelRatio / 2;
 function create() {
 
     // ********Setting up the game********
-    background = game.add.tileSprite(0, 0, widthBound, heightBound, 'bigClouds');
-    game.world.setBounds(0, 0, 360, 10000);
+    game.world.setBounds(0, 0, 360, 1000000);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.p2.gravity.y = 0;
+
+    background = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'bigClouds');
 
     // ********Creating the kite********
     kiteStartingX = game.world.centerX;
@@ -102,7 +101,8 @@ function create() {
     altitude =  Math.round(kiteStartingY - kite.body.y);
     scoreText = game.add.text(0, 0, "0", {font: '19px Arial', fill: '#fff', align: "left"});
     scoreText.fixedToCamera = true;
-    scoreText.cameraOffset.setTo(widthBound - 50, 10);
+    scoreText.cameraOffset.setTo(game.world.width - 10, 10);
+    scoreText.anchor.setTo(1, 0);
 
     // ********Setting up controls********
     directional= game.input.keyboard.createCursorKeys();
