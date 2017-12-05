@@ -25,6 +25,11 @@ var kiteStartingX;
 var kiteStartingY;
 var score = 0;
 
+// Pertain to the lose boundary
+var graphics;
+var loseBoundary;
+var loseSpeed;
+
 var playerIsAlive;
 var timer;
 var timer2;
@@ -125,9 +130,12 @@ function create() {
     // timer2.add(500, game.camera.unfollow, this);
 
     // ********Lose boundary********
-    // loseBoundary = new Graphics(game);
-    // loseBoundary.beginFill(0xff0000);
-    // loseBoundary.drawRectangle(0, )
+    graphics = game.add.graphics();
+    graphics.beginFill(0xff0000);
+    graphics.lineStyle(2, 0xff0000, 1);
+    loseBoundary = graphics.drawRect(0, kite.body.y + 400, game.world.width, 30);
+    graphics.endFill();
+    loseSpeed = 1;
 }
 
 function kiteOut(kite) {
@@ -178,6 +186,7 @@ function onUp() {
 }
 
 function update() {
+    loseBoundary.y -= loseSpeed;
     background.tilePosition.y += 10;
     updateKiteAngle();
     //boundaryCollisions();
