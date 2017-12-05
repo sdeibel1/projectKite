@@ -5,7 +5,6 @@ function preload() {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
-        game.load.image('black', 'assets/images/black.jpg', 320, 560);
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
@@ -101,7 +100,7 @@ function create() {
 
     // ********Creating altitude text********
     altitude =  Math.round(kiteStartingY - kite.body.y);
-    scoreText = game.add.text(0, 0, score + " ft", {font: '19px Arial', fill: '#fff', align: "left"});
+    scoreText = game.add.text(0, 0, "0", {font: '19px Arial', fill: '#fff', align: "left"});
     scoreText.fixedToCamera = true;
     scoreText.cameraOffset.setTo(widthBound - 50, 10);
 
@@ -149,7 +148,6 @@ function actionOnClick () {
     kite.revive();
     restartButton.visible = false;
     gameOverText.visible = false;
-    black.visible = false;
     background.visible = true;
     scoreText.visible = true;
 
@@ -356,8 +354,7 @@ function lose() {
     restartButton.onInputOut.add(out, this);
     restartButton.onInputUp.add(up, this);
 
-    background.visible = false;
-    black = game.add.tileSprite(0, 0, 320, 560, 'black');
+
     scoreText.visible = false;
 
     powerUp.kill();
