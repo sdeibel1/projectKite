@@ -59,7 +59,7 @@ function create() {
 
     // ********Creating the kite********
     kiteStartingX = game.world.centerX;
-    kiteStartingY = game.world.height*.80;
+    kiteStartingY = game.world.height*.95;
 
     kite = game.add.sprite(kiteStartingX, kiteStartingY, 'kite');
     //scales kite sprite for all devices
@@ -77,7 +77,7 @@ function create() {
     kite.body.gravity.y = 100 + Math.random() * 100;
 
     // ********Creating the powerup********
-    powerUp = game.add.sprite(game.world.centerX, game.world.height*.85,'powerUp');
+    powerUp = game.add.sprite(game.world.centerX, kite.body.y + 100,'powerUp');
     powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio); //scales powerup sprite for all devices
     powerUp.anchor.setTo(0.5, 0.5);
     game.physics.enable(powerUp, Phaser.Physics.P2JS);
@@ -123,6 +123,11 @@ function create() {
 
     timer2 = game.time.create(false);
     // timer2.add(500, game.camera.unfollow, this);
+
+    // ********Lose boundary********
+    // loseBoundary = new Graphics(game);
+    // loseBoundary.beginFill(0xff0000);
+    // loseBoundary.drawRectangle(0, )
 }
 
 function kiteOut(kite) {
@@ -210,7 +215,7 @@ function update() {
 
    altitude =  Math.round(kiteStartingY - kite.body.y);
    if(altitude >= score) {
-     score = altitude;
+     score = Math.round(altitude/6);
    }
    scoreText.setText(score + " ft");
 
