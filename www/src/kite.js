@@ -7,8 +7,10 @@ function preload() {
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
-        game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
+        game.load.spritesheet('powerUp','assets/images/mushroom.png', 50, 50);
+        game.load.spritesheet('obstacle','assets/images/turtleshell.png', 50, 50);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
+
 }
 
 var kiteCollisionGroup;
