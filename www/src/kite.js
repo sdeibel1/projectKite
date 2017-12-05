@@ -268,48 +268,6 @@ function createPowerup() {
     powerupsToCreate = [];
 }
 
-function createRope(length, xAnchor,yAnchor) {
-    var height = 16;        //  Height for the physics body - your image height is 8px
-    var width = 30;         //  This is the width for the physics body. If too small the rectangles will get scrambled together.
-    var maxForce = 30000;    // The force that holds the rectangles together.
-
-    for (var i = 0; i <= length; i++) {
-        var x = xAnchor;                    //  All rects are on the same x position
-        var y = (yAnchor) - (i * height);     //  Every new rect is positioned below the last
-
-        // Add string sprite
-        newRect = game.add.sprite(x,y,'string');
-
-        // Enable physicsbody
-        game.physics.p2.enable(newRect, false);
-
-        // Set custom rectangle
-        newRect.body.setRectangle(width, height);
-
-        if (i === 0) {
-            // Anchor the first one created
-            newRect.body.static = false;
-            game.physics.p2.createRevoluteConstraint(kite, [0,+70], newRect, [0,10],maxForce);
-        } else {
-           newRect.body.mass = length / i;     //  Reduce mass for evey rope element
-        }
-
-        //  After the first rectangle is created we can add the constraint
-        if (lastRect) {
-            game.physics.p2.createRevoluteConstraint(newRect, [0, -10], lastRect, [0, 10], maxForce);
-        }
-        if (length - i < 3) {
-            floatLinks.push(lastRect);
-        }
-
-        if (length - i > 8) {
-            newRect.visible = false;
-        }
-
-        lastRect = newRect;
-    }
-}
-
 function Boost(){
     kite.body.velocity.y+= -10;
 }
@@ -378,11 +336,19 @@ function boundaryCollisions() {
 
 function hitPowerup(kiteBody, powerupBody) {
     powerupBody.sprite.kill();
+    // var boostTimer = game.time.create(false);
+    // boostTimer.repeat(20, 8, boostUp, this);
+    // boostTimer.start();
+
     if (kiteBody.velocity.y > 0) {
         kiteBody.velocity.y = -250
     } else {
         kiteBody.velocity.y -= 170;
     }
+}
+
+function boostUp() {
+    kite.body.velocity.y -= 60;
 }
 
 function CameraPan(){
