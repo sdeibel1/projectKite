@@ -189,6 +189,7 @@ function out() {
 }
 
 function actionOnClick () {
+    loseBoundary.moveTo(0, kiteStartingY + 400);
     kite.revive();
     restartButton.visible = false;
     gameOverText.visible = false;
@@ -196,11 +197,12 @@ function actionOnClick () {
     scoreText.visible = true;
 
     kite.body.x = game.world.centerX;
-    kite.body.y = game.world.height*.80;
+    kite.body.y = kiteStartingY;
     kite.body.velocity.x = 0;
     kite.body.velocity.y = -300;
 
     game.camera.y = kite.body.y;
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1);
 
     playerIsAlive = true;
 }
@@ -217,20 +219,13 @@ function onUp() {
 }
 
 function update() {
-    background.tilePosition.y += 10;
+    if (playerIsAlive) {
+        background.tilePosition.y += 10;
+    }
     updateKiteAngle();
-    //boundaryCollisions();
+
     if(playerIsAlive == true && kite.body.y >= loseBoundary.position.y + kiteStartingY + 400) { // For some reason loseBoundary.worldPosition.y is negative, so I multiply by -1
       lose();
-    }
-
-    if (kite.body.y < game.camera.y) {
-        //kite.body.y = game.camera.y; //recomment this line to go back to old camera
-    }
-
-
-    if(playerIsAlive == true){
-        //CameraPan();
     }
 
     for (powerup of powerups) {
@@ -397,6 +392,7 @@ function lose() {
     restartButton.onInputOut.add(out, this);
     restartButton.onInputUp.add(up, this);
 
+    game.camera.unfollow();
 
     scoreText.visible = false;
 
@@ -476,5 +472,7 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-    loseBoundary.y -= 1;
+    if (playerIsAlive){
+        loseBoundary.y -= 1;
+    }
 }
