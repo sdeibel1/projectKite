@@ -129,8 +129,6 @@ function create() {
 
     timer2 = game.time.create(false);
     // timer2.add(500, game.camera.unfollow, this);
-<<<<<<< HEAD
-=======
 
     // ********Lose boundary********
     graphics = game.add.graphics();
@@ -139,7 +137,6 @@ function create() {
     loseBoundary = graphics.drawRect(0, kite.body.y + 400, game.world.width, 30);
     graphics.endFill();
     loseSpeed = 1;
->>>>>>> 99d62f40569ce41595166ab1565016e52f24c742
 }
 
 function kiteOut(kite) {
