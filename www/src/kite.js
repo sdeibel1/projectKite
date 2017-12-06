@@ -429,12 +429,9 @@ function hitPowerup(kiteBody, powerupBody) {
     // var boostTimer = game.time.create(false);
     // boostTimer.repeat(20, 8, boostUp, this);
     // boostTimer.start();
-    
-    if (kiteBody.velocity.y > 0) {
-        kiteBody.velocity.y = -250
-    } else {
-        kiteBody.velocity.y -= 170;
-    }
+    //console.log(kite.body.velocity.y);
+    kite.body.velocity.y -= 300;
+    //console.log(kite.body.velocity.y);
 }
 
 
