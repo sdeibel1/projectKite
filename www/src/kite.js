@@ -16,7 +16,6 @@ function preload() {
 
 var kiteCollisionGroup;
 var powerupCollisionGroup;
-var goonCollisionGroup;
 
 var boost;
 var directional;
@@ -41,15 +40,12 @@ var loseTimer;
 var restartButton;
 var gameOverText;
 var powerupsToCreate = [];
-var goonsToCreate = []; 
-var goons = [];
 var powerups = [];
 var altitude;
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
-var powerUp;
-var goon;
+var startingPowerUp;
 var windUp = -10;
 var windUpVariance = 0;
 var scoreText;
@@ -57,8 +53,7 @@ var scoreText;
 var background;
 
 //scaling ratios//
-var powerUpScaleRatio = window.devicePixelRatio / 2;
-var goonScaleRatio = window.devicePixelRatio / 2;
+var powerUpScaleRatio = window.devicePixelRatio / 3;
 var kiteScaleRatio = window.devicePixelRatio / 2;
 
 
@@ -92,18 +87,10 @@ function create() {
     kite.body.gravity.y = 100 + Math.random() * 100;
 
     // ********Creating the powerup********
-    powerUp = game.add.sprite(game.world.centerX, kiteStartingY+100,'powerUp');
-    powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio); //scales powerup sprite for all devices
-    powerUp.anchor.setTo(0.5, 0.5);
-    game.physics.enable(powerUp, Phaser.Physics.P2JS);
-
-
-     // ********Creating the goon********
-    goon = game.add.sprite(game.world.centerX, game.world.height*.85,'goon');
-    goon.scale.setTo(goonScaleRatio,goonScaleRatio); //scales goon sprite for all devices
-    goon.anchor.setTo(0.5, 0.5);
-    game.physics.enable(goon, Phaser.Physics.P2JS);
-
+    startingPowerUp = game.add.sprite(game.world.centerX, kiteStartingY+100,'powerUp');
+    startingPowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio); //scales powerup sprite for all devices
+    startingPowerUp.anchor.setTo(0.5, 0.5);
+    game.physics.enable(startingPowerUp, Phaser.Physics.P2JS);
 
     // ********Adds tail********
     //createRope(5, kite.x, kite.y + 20);
@@ -111,21 +98,14 @@ function create() {
     // ********Collisions********
     kiteCollisionGroup = game.physics.p2.createCollisionGroup();
     powerupCollisionGroup = game.physics.p2.createCollisionGroup();
-    goonCollisionGroup= game.physics.p2.createCollisionGroup();
 
     kite.body.setCollisionGroup(kiteCollisionGroup);
-    powerUp.body.setCollisionGroup(powerupCollisionGroup);
-    goon.body.setCollisionGroup(goonCollisionGroup);
-
-    kite.body.collides([powerupCollisionGroup,goonCollisionGroup]);
-    powerUp.body.collides(kiteCollisionGroup);
-    goon.body.collides(kiteCollisionGroup); 
-
+    startingPowerUp.body.setCollisionGroup(powerupCollisionGroup);
+    startingPowerUp.body.collides(kiteCollisionGroup);
 
     //game.physics.p2.updateBoundsCollisionGroup();
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
-    kite.body.createBodyCallback(powerUp, hitPowerup, this);
-    // kite.body.createBodyCallback(goon, hitGoon, this);
+    kite.body.createBodyCallback(startingPowerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
 
     // ********Creating altitude text********
@@ -151,7 +131,7 @@ function create() {
     // ********Timer********
     timer = game.time.create(false);
     timer.loop(2500, createPowerup, this);
-    timer.loop(10000,createGoon,this);
+    // timer.loop(10000,createGoon,this);
     timer.start();
 
     timer2 = game.time.create(false);
@@ -202,8 +182,7 @@ function actionOnClick () {
     kite.body.velocity.y = -300;
 
     game.camera.y = kite.body.y;
-    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1);
-
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1 ,.1);
     playerIsAlive = true;
 }
 
@@ -215,7 +194,7 @@ function onDown() {
 
 function onUp() {
     deltaX = game.input.activePointer.x - lastX;
-    kite.body.velocity.x += deltaX*.9;
+    kite.body.velocity.x += deltaX*1.4;
 }
 
 function update() {
@@ -276,7 +255,7 @@ function createPowerup() {
 
     if (playerIsAlive) {
         // this powerup will go below the kite (so that the player has a chance of getting it)
-        powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        var powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
         powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
         powerupsToCreate.push(powerUp);
@@ -286,7 +265,7 @@ function createPowerup() {
         on top of the kite which ends up being confusing */
             // add the above powerup to powerupsToCreate array
             // this powerup will go above the kite
-            powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
+            var powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
             powerUp2.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
             powerupsToCreate.push(powerUp2);
@@ -304,48 +283,6 @@ function createPowerup() {
         }
     }
     powerupsToCreate = [];
-}
-
-
-function createGoon() {
-    // Calculating the positions for the powerups that will be created
-    var randomX = 1 + Math.random()*(game.world.width-2);
-    var randomX2 = 1 + Math.random()*(game.world.width-2);
-    var acceptableBelowYRange = (game.camera.y + game.camera.height) - kite.body.y - 50;
-    var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
-    var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
-    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 50;
-
-    if (playerIsAlive) {
-        // this powerup will go below the kite (so that the player has a chance of getting it)
-        // goon = game.add.sprite(randomX, belowKiteY, 'goon');
-        // goon.scale.setTo(goonScaleRatio,goonScaleRatio);
-
-        goonsToCreate.push(goon);
-        goons.push(powerUp);
-        if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
-         // Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
-        // on top of the kite which ends up being confusing 
-            // add the above powerup to powerupsToCreate array
-            // this powerup will go above the kite
-            goon2 = game.add.sprite(randomX2, belowKiteY, 'goon');
-            goon2.scale.setTo(goonScaleRatio,goonScaleRatio);
-
-            goonsToCreate.push(powerUp2);
-            goons.push(powerUp2);
-        }
-
-        for (goon of goonsToCreate) { // creates the powerups
-            goon.anchor.setTo(.5, .5);
-            game.physics.enable(goon, Phaser.Physics.P2JS);
-            goon.body.velocity.y = 100;
-            //powerup.checkWorldBounds = true;
-            goon.body.setCollisionGroup(goonCollisionGroup);
-            goon.body.collides(kiteCollisionGroup);
-            kite.body.createBodyCallback(goon, hitGoon, this);
-        }
-    }
-    goonsToCreate = [];
 }
 
 function Boost(){
@@ -396,8 +333,7 @@ function lose() {
 
     scoreText.visible = false;
 
-    powerUp.kill();
-    goon.kill();
+    // powerUp.kill();
 
     // Kill everything
     kite.kill();
@@ -429,17 +365,6 @@ function hitPowerup(kiteBody, powerupBody) {
     kite.body.velocity.y -= 300;
     //console.log(kite.body.velocity.y);
 }
-
-
-function hitGoon(kiteBody, goonBody){
-
-
-
-
-   
-
-    }
-
 
 function boostUp() {
     kite.body.velocity.y -= 60;
