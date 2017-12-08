@@ -407,16 +407,7 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-<<<<<<< HEAD
-
-        if (playerIsAlive){
-
-                loseBoundary.y -= 3;
-            }
-}
-=======
     if (playerIsAlive){
-        loseBoundary.y -= 1;
+        loseBoundary.y -= 3;
     }
 }
->>>>>>> 0e8828c84fe385189218d9a6123164638fa4d1c0
