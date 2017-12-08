@@ -55,10 +55,7 @@ var background;
 
 //scaling ratios//
 var powerUpScaleRatio = window.devicePixelRatio / 3;
-<<<<<<< HEAD
-var goonScaleRatio = window.devicePixelRatio / 6;
-=======
->>>>>>> b66133b995baf5c1574f62edb127635c852423b6
+
 var kiteScaleRatio = window.devicePixelRatio / 2;
 
 
@@ -407,12 +404,9 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-    if (playerIsAlive & loseBoundary.y > kite.body.y+20){
-        loseBoundary.y -= distToRedLine*0.3;
-            }
-            else{
 
-                loseBoundary.y-=1;
+        if (playerIsAlive){
 
+                loseBoundary.y -= 3;
             }
 }
