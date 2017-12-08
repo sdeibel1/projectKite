@@ -10,8 +10,6 @@ function preload() {
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
-
-
 }
 
 var kiteCollisionGroup;
@@ -41,7 +39,7 @@ var loseTimer;
 var restartButton;
 var gameOverText;
 var powerupsToCreate = [];
-var goonsToCreate = []; 
+var goonsToCreate = [];
 var goons = [];
 var powerups = [];
 var altitude;
@@ -119,7 +117,7 @@ function create() {
 
     kite.body.collides([powerupCollisionGroup,goonCollisionGroup]);
     powerUp.body.collides(kiteCollisionGroup);
-    goon.body.collides(kiteCollisionGroup); 
+    goon.body.collides(kiteCollisionGroup);
 
 
     //game.physics.p2.updateBoundsCollisionGroup();
@@ -158,7 +156,7 @@ function create() {
     loseTimer = game.time.create(false);
     loseTimer.loop(50, moveLoseBoundary, this);
     loseTimer.start();
-  
+
     // timer2.add(500, game.camera.unfollow, this);
 
     // ********Lose boundary********
@@ -325,7 +323,7 @@ function createGoon() {
         goons.push(powerUp);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
          // Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
-        // on top of the kite which ends up being confusing 
+        // on top of the kite which ends up being confusing
             // add the above powerup to powerupsToCreate array
             // this powerup will go above the kite
             goon2 = game.add.sprite(randomX2, belowKiteY, 'goon');
@@ -405,9 +403,9 @@ function lose() {
         powerup.kill();
     }
 
-    
+
     powerupsToCreate = [];
-   
+
     playerIsAlive = false;
   }
 
@@ -436,7 +434,7 @@ function hitGoon(kiteBody, goonBody){
 
 
 
-   
+
 
     }
 
