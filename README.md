@@ -5,16 +5,20 @@ description of our game
 ## How to Get Started
 
 copy of project link
-how to install project into the software elements they need
+how to install project into the software elements needed
 
 ## Prereqs
 
 PhoneGap (and how to download it)
+if on school wifi set up a hot spot wifi from your phone to run it off of.
+
 
 ## How to Play
 
-instructions on how to play our game
-
+To move the kite left and right swipe your finger in the direction
+you want it to move. To gain altitude collect power ups, the ______s, by
+colliding the kite with them. The goal is to get as high as possible and beat
+your last score.
 
 ### PhoneGap CLI
 
