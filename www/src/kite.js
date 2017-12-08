@@ -103,6 +103,8 @@ function create() {
     startingPowerUp.body.setCollisionGroup(powerupCollisionGroup);
     startingPowerUp.body.collides(kiteCollisionGroup);
 
+    kite.body.collides(powerupCollisionGroup);
+
     //game.physics.p2.updateBoundsCollisionGroup();
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
     kite.body.createBodyCallback(startingPowerUp, hitPowerup, this);
