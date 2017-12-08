@@ -175,6 +175,7 @@ function actionOnClick () {
     kite.revive();
     restartButton.visible = false;
     gameOverText.visible = false;
+    highScoreText.visible = false;
     background.visible = true;
     scoreText.visible = true;
 
@@ -326,7 +327,7 @@ function lose() {
     gameOverText.anchor.setTo(0.5);
 
     // High Score Text
-    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score :'+ score, { font: '20px Arial', fill: '#fff'});
+    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score:'+ score, { font: '20px Arial', fill: '#fff'});
     highScoreText.anchor.setTo(0.5);
 
     // Restart Button
