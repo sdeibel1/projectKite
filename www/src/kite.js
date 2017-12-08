@@ -10,8 +10,6 @@ function preload() {
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
-
-
 }
 
 var kiteCollisionGroup;
@@ -142,7 +140,7 @@ function create() {
     loseTimer = game.time.create(false);
     loseTimer.loop(50, moveLoseBoundary, this);
     loseTimer.start();
-  
+
     // timer2.add(500, game.camera.unfollow, this);
 
     // ********Lose boundary********
@@ -177,6 +175,7 @@ function actionOnClick () {
     kite.revive();
     restartButton.visible = false;
     gameOverText.visible = false;
+    highScoreText.visible = false;
     background.visible = true;
     scoreText.visible = true;
 
@@ -327,8 +326,12 @@ function xWindUpdate(){
 
 function lose() {
     // Game Over Text
-    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 50, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
+
+    // High Score Text
+    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score:'+ score, { font: '20px Arial', fill: '#fff'});
+    highScoreText.anchor.setTo(0.5);
 
     // Restart Button
     restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 25, 'restartButton', actionOnClick, this, 2, 1, 0);
@@ -348,9 +351,9 @@ function lose() {
         powerup.kill();
     }
 
-    
+
     powerupsToCreate = [];
-   
+
     playerIsAlive = false;
   }
 
@@ -404,9 +407,16 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
+<<<<<<< HEAD
 
         if (playerIsAlive){
 
                 loseBoundary.y -= 3;
             }
 }
+=======
+    if (playerIsAlive){
+        loseBoundary.y -= 1;
+    }
+}
+>>>>>>> 0e8828c84fe385189218d9a6123164638fa4d1c0
