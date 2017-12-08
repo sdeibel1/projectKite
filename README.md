@@ -10,7 +10,8 @@ how to install project into the software elements needed
 ## Prereqs
 
 PhoneGap (and how to download it)
-if on school wifi set up a hot spot wifi from your phone to run it off of.
+if on school wifi set up a hot spot wifi from your phone to run it off of. If you have a mac the
+hotspot is not neccesary.
 
 
 ## How to Play
