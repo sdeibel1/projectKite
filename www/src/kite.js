@@ -23,6 +23,7 @@ var directional;
 var lastX;
 
 var cameraYmin;
+var distToRedLine;
 
 var kite;
 var kiteStartingX;
@@ -57,8 +58,8 @@ var scoreText;
 var background;
 
 //scaling ratios//
-var powerUpScaleRatio = window.devicePixelRatio / 2;
-var goonScaleRatio = window.devicePixelRatio / 2;
+var powerUpScaleRatio = window.devicePixelRatio / 3;
+var goonScaleRatio = window.devicePixelRatio / 6;
 var kiteScaleRatio = window.devicePixelRatio / 2;
 
 
@@ -219,6 +220,9 @@ function onUp() {
 }
 
 function update() {
+
+    distToRedLine = loseBoundary.y-kite.body.y ;
+
     if (playerIsAlive) {
         background.tilePosition.y += 10;
     }
@@ -472,7 +476,12 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-    if (playerIsAlive){
-        loseBoundary.y -= 1;
-    }
+    if (playerIsAlive & loseBoundary.y > kite.body.y+20){
+        loseBoundary.y -= distToRedLine*0.3;
+            }
+            else{
+
+                loseBoundary.y-=1;
+
+            }
 }
