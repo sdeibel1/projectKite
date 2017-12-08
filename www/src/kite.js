@@ -14,7 +14,6 @@ function preload() {
 
 var kiteCollisionGroup;
 var powerupCollisionGroup;
-var goonCollisionGroup;
 
 var boost;
 var directional;
@@ -39,15 +38,17 @@ var loseTimer;
 var restartButton;
 var gameOverText;
 var powerupsToCreate = [];
+<<<<<<< HEAD
 var goonsToCreate = [];
 var goons = [];
+=======
+>>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 var powerups = [];
 var altitude;
 var floatLinks = []; // The number of pieces in the string
 var lastRect;
 var wind = 0;
-var powerUp;
-var goon;
+var startingPowerUp;
 var windUp = -10;
 var windUpVariance = 0;
 var scoreText;
@@ -55,8 +56,7 @@ var scoreText;
 var background;
 
 //scaling ratios//
-var powerUpScaleRatio = window.devicePixelRatio / 2;
-var goonScaleRatio = window.devicePixelRatio / 2;
+var powerUpScaleRatio = window.devicePixelRatio / 3;
 var kiteScaleRatio = window.devicePixelRatio / 2;
 
 
@@ -90,18 +90,10 @@ function create() {
     kite.body.gravity.y = 100 + Math.random() * 100;
 
     // ********Creating the powerup********
-    powerUp = game.add.sprite(game.world.centerX, kiteStartingY+100,'powerUp');
-    powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio); //scales powerup sprite for all devices
-    powerUp.anchor.setTo(0.5, 0.5);
-    game.physics.enable(powerUp, Phaser.Physics.P2JS);
-
-
-     // ********Creating the goon********
-    goon = game.add.sprite(game.world.centerX, game.world.height*.85,'goon');
-    goon.scale.setTo(goonScaleRatio,goonScaleRatio); //scales goon sprite for all devices
-    goon.anchor.setTo(0.5, 0.5);
-    game.physics.enable(goon, Phaser.Physics.P2JS);
-
+    startingPowerUp = game.add.sprite(game.world.centerX, kiteStartingY+100,'powerUp');
+    startingPowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio); //scales powerup sprite for all devices
+    startingPowerUp.anchor.setTo(0.5, 0.5);
+    game.physics.enable(startingPowerUp, Phaser.Physics.P2JS);
 
     // ********Adds tail********
     //createRope(5, kite.x, kite.y + 20);
@@ -109,21 +101,25 @@ function create() {
     // ********Collisions********
     kiteCollisionGroup = game.physics.p2.createCollisionGroup();
     powerupCollisionGroup = game.physics.p2.createCollisionGroup();
-    goonCollisionGroup= game.physics.p2.createCollisionGroup();
 
     kite.body.setCollisionGroup(kiteCollisionGroup);
+<<<<<<< HEAD
     powerUp.body.setCollisionGroup(powerupCollisionGroup);
     goon.body.setCollisionGroup(goonCollisionGroup);
 
     kite.body.collides([powerupCollisionGroup,goonCollisionGroup]);
     powerUp.body.collides(kiteCollisionGroup);
     goon.body.collides(kiteCollisionGroup);
+=======
+    startingPowerUp.body.setCollisionGroup(powerupCollisionGroup);
+    startingPowerUp.body.collides(kiteCollisionGroup);
+>>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 
+    kite.body.collides(powerupCollisionGroup);
 
     //game.physics.p2.updateBoundsCollisionGroup();
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
-    kite.body.createBodyCallback(powerUp, hitPowerup, this);
-    // kite.body.createBodyCallback(goon, hitGoon, this);
+    kite.body.createBodyCallback(startingPowerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
 
     // ********Creating altitude text********
@@ -149,7 +145,7 @@ function create() {
     // ********Timer********
     timer = game.time.create(false);
     timer.loop(2500, createPowerup, this);
-    timer.loop(10000,createGoon,this);
+    // timer.loop(10000,createGoon,this);
     timer.start();
 
     timer2 = game.time.create(false);
@@ -191,6 +187,7 @@ function actionOnClick () {
     kite.revive();
     restartButton.visible = false;
     gameOverText.visible = false;
+    highScoreText.visible = false;
     background.visible = true;
     scoreText.visible = true;
 
@@ -200,8 +197,7 @@ function actionOnClick () {
     kite.body.velocity.y = -300;
 
     game.camera.y = kite.body.y;
-    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1);
-
+    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1 ,.1);
     playerIsAlive = true;
 }
 
@@ -213,7 +209,7 @@ function onDown() {
 
 function onUp() {
     deltaX = game.input.activePointer.x - lastX;
-    kite.body.velocity.x += deltaX*.9;
+    kite.body.velocity.x += deltaX*1.4;
 }
 
 function update() {
@@ -274,7 +270,7 @@ function createPowerup() {
 
     if (playerIsAlive) {
         // this powerup will go below the kite (so that the player has a chance of getting it)
-        powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        var powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
         powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
         powerupsToCreate.push(powerUp);
@@ -284,7 +280,7 @@ function createPowerup() {
         on top of the kite which ends up being confusing */
             // add the above powerup to powerupsToCreate array
             // this powerup will go above the kite
-            powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
+            var powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
             powerUp2.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
             powerupsToCreate.push(powerUp2);
@@ -304,6 +300,7 @@ function createPowerup() {
     powerupsToCreate = [];
 }
 
+<<<<<<< HEAD
 
 function createGoon() {
     // Calculating the positions for the powerups that will be created
@@ -346,6 +343,8 @@ function createGoon() {
     goonsToCreate = [];
 }
 
+=======
+>>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 function Boost(){
     kite.body.velocity.y+= -10;
 }
@@ -381,8 +380,12 @@ function xWindUpdate(){
 
 function lose() {
     // Game Over Text
-    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 50, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
+
+    // High Score Text
+    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score:'+ score, { font: '20px Arial', fill: '#fff'});
+    highScoreText.anchor.setTo(0.5);
 
     // Restart Button
     restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 25, 'restartButton', actionOnClick, this, 2, 1, 0);
@@ -394,8 +397,7 @@ function lose() {
 
     scoreText.visible = false;
 
-    powerUp.kill();
-    goon.kill();
+    // powerUp.kill();
 
     // Kill everything
     kite.kill();
@@ -428,6 +430,7 @@ function hitPowerup(kiteBody, powerupBody) {
     //console.log(kite.body.velocity.y);
 }
 
+<<<<<<< HEAD
 
 function hitGoon(kiteBody, goonBody){
 
@@ -439,6 +442,8 @@ function hitGoon(kiteBody, goonBody){
     }
 
 
+=======
+>>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 function boostUp() {
     kite.body.velocity.y -= 60;
 }
