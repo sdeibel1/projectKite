@@ -322,12 +322,12 @@ function xWindUpdate(){
 
 function lose() {
     // Game Over Text
-    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 50, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
 
     // High Score Text
-    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score :' + score, { font: '20px Arial', fill: '#fff'});
-    highScoreText.achor.setTo(0.5);
+    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score :'+ score, { font: '20px Arial', fill: '#fff'});
+    highScoreText.anchor.setTo(0.5);
 
     // Restart Button
     restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 25, 'restartButton', actionOnClick, this, 2, 1, 0);
