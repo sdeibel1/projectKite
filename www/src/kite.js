@@ -22,9 +22,7 @@ function preload() {
 var kiteCollisionGroup;
 var powerupCollisionGroup;
 
-var boost;
-var directional;
-var lastX;
+var keyboardControls;
 
 var cameraYmin;
 var distToRedLine;
@@ -140,11 +138,8 @@ function create() {
     scoreText.anchor.setTo(1, 0);
 
     // ********Setting up controls********
-    directional= game.input.keyboard.createCursorKeys();
-    boost = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-    game.input.onDown.add(onDown, this);
-    game.input.onUp.add(onUp, this);
+    keyboardControls = new KeyboardControls(game.input, kite);
+    gestureControls = new GestureControls(game.input, kite);
 
     // ********Camera********
     game.camera.y = kite.y;
@@ -217,14 +212,6 @@ function actionOnClick () {
 
 
 //******* Movement Controls ***********
-function onDown() {
-    lastX = game.input.activePointer.x;
-}
-
-function onUp() {
-    deltaX = game.input.activePointer.x - lastX;
-    kite.body.velocity.x += deltaX*1.4;
-}
 
 function update() {
 
@@ -247,15 +234,7 @@ function update() {
 
     kite.body.velocity.y += 2.5; // Gravity
 
-    if (directional.left.isDown ) {
-      kite.body.velocity.x = -75;
-    } else if (directional.right.isDown) {
-      kite.body.velocity.x = 75;
-    } else if (directional.up.isDown || boost.isDown) {
-      kite.body.velocity.y = -75;
-    } else if (directional.down.isDown) {
-      kite.body.velocity.y = 75;
-    }
+    keyboardControls.update();
 
     altitude =  Math.round(kiteStartingY - kite.body.y);
     if(altitude >= score) {
