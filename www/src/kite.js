@@ -10,6 +10,9 @@ function preload() {
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
+        game.load.audio('theme','assets/audio/theme1.wav');
+        game.load.audio('collect','assets/audio/collect.wav');
+        game.load.audio('gameOverSound','assets/audio/lose.wav');
 }
 
 var kiteCollisionGroup;
@@ -35,6 +38,10 @@ var playerIsAlive;
 var timer;
 var timer2;
 var loseTimer;
+
+var music;
+var collect;
+var gameOverSound
 
 var restartButton;
 var gameOverText;
@@ -66,6 +73,15 @@ function create() {
     game.physics.p2.gravity.y = 0;
 
     background = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'bigClouds');
+
+
+    music = game.add.audio('theme'); 
+    music.loop=true;
+    music.play();
+
+    collect=game.add.audio('collect');
+
+    gameOverSound=game.add.audio('gameOverSound');
 
     // ********Creating the kite********
     kiteStartingX = game.world.centerX;
@@ -171,6 +187,10 @@ function out() {
 }
 
 function actionOnClick () {
+
+    gameOverSound.stop();
+    music.loop=true;
+    music.play();
     loseBoundary.moveTo(0, kiteStartingY + 400);
     kite.revive();
     restartButton.visible = false;
@@ -325,6 +345,9 @@ function xWindUpdate(){
 }
 
 function lose() {
+    music.stop();
+    gameOverSound.play();
+
     // Game Over Text
     gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
@@ -366,6 +389,8 @@ function boundaryCollisions() {
 }
 
 function hitPowerup(kiteBody, powerupBody) {
+
+    collect.play();
     powerupBody.sprite.kill();
     powerupBody.removeCollisionGroup(kiteCollisionGroup, true);
     // var boostTimer = game.time.create(false);
