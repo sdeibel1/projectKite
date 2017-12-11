@@ -69,7 +69,6 @@ var powerUpScaleRatio = window.devicePixelRatio / 3;
 
 var kiteScaleRatio = window.devicePixelRatio / 2;
 
-
 function create() {
 
     // ********Setting up the game********
@@ -194,7 +193,6 @@ function out() {
 }
 
 function actionOnClick () {
-
     losstheme.stop();
     gameOverSound.stop();
     music.loop=true;
@@ -259,22 +257,17 @@ function update() {
       kite.body.velocity.y = 75;
     }
 
-   altitude =  Math.round(kiteStartingY - kite.body.y);
-   if(altitude >= score) {
-     score = altitude;
-   }
-   scoreText.setText(score + " ft");
+    altitude =  Math.round(kiteStartingY - kite.body.y);
+    if(altitude >= score) {
+        score = altitude;
+    }
+    scoreText.setText(score + " ft");
 
-   game.world.wrap(kite.body, 10);
+    game.world.wrap(kite.body, 10);
 }
 
 function render() {
     game.debug.cameraInfo(game.camera, 32, 32);
-}
-
-// Does not work
-function move(pointer, x, y, click) {
-    kite.body.velocity.x += 1000 * (game.input.activePointer.x - x);
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
@@ -295,8 +288,8 @@ function createPowerup() {
         powerupsToCreate.push(powerUp);
         powerups.push(powerUp);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
-        /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
-        on top of the kite which ends up being confusing */
+            /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
+            on top of the kite which ends up being confusing */
             // add the above powerup to powerupsToCreate array
             // this powerup will go above the kite
             var powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
@@ -404,16 +397,7 @@ function hitPowerup(kiteBody, powerupBody) {
     whoosh.play();
     powerupBody.sprite.kill();
     powerupBody.removeCollisionGroup(kiteCollisionGroup, true);
-    // var boostTimer = game.time.create(false);
-    // boostTimer.repeat(20, 8, boostUp, this);
-    // boostTimer.start();
-    //console.log(kite.body.velocity.y);
     kite.body.velocity.y -= 300;
-    //console.log(kite.body.velocity.y);
-}
-
-function boostUp() {
-    kite.body.velocity.y -= 60;
 }
 
 function CameraPan(){
