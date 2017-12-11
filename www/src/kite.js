@@ -14,6 +14,8 @@ function preload() {
         game.load.audio('collect','assets/audio/collect.wav');
         game.load.audio('gameOverSound','assets/audio/lose.wav');
         game.load.audio('losstheme','assets/audio/losstheme.wav');
+        game.load.audio('whoosh','assets/audio/whoosh.wav');
+
 
 }
 
@@ -45,6 +47,7 @@ var music;
 var collect;
 var gameOverSound;
 var losstheme;
+var whoosh;
 
 var restartButton;
 var gameOverText;
@@ -77,16 +80,15 @@ function create() {
 
     background = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'bigClouds');
 
+    //***creating the audio files***//
 
     music = game.add.audio('theme'); 
     music.loop=true;
     music.play();
-
     collect=game.add.audio('collect');
-
     gameOverSound=game.add.audio('gameOverSound');
-
     losstheme=game.add.audio('losstheme');
+    whoosh=game.add.audio('whoosh');
 
     // ********Creating the kite********
     kiteStartingX = game.world.centerX;
@@ -353,6 +355,7 @@ function xWindUpdate(){
 function lose() {
     music.stop();
     gameOverSound.play();
+    losstheme.loop=true;
     losstheme.play();
 
     // Game Over Text
@@ -398,6 +401,7 @@ function boundaryCollisions() {
 function hitPowerup(kiteBody, powerupBody) {
 
     collect.play();
+    whoosh.play();
     powerupBody.sprite.kill();
     powerupBody.removeCollisionGroup(kiteCollisionGroup, true);
     // var boostTimer = game.time.create(false);
