@@ -13,6 +13,8 @@ function preload() {
         game.load.audio('theme','assets/audio/theme1.wav');
         game.load.audio('collect','assets/audio/collect.wav');
         game.load.audio('gameOverSound','assets/audio/lose.wav');
+        game.load.audio('losstheme','assets/audio/losstheme.wav');
+
 }
 
 var kiteCollisionGroup;
@@ -41,7 +43,8 @@ var loseTimer;
 
 var music;
 var collect;
-var gameOverSound
+var gameOverSound;
+var losstheme;
 
 var restartButton;
 var gameOverText;
@@ -82,6 +85,8 @@ function create() {
     collect=game.add.audio('collect');
 
     gameOverSound=game.add.audio('gameOverSound');
+
+    losstheme=game.add.audio('losstheme');
 
     // ********Creating the kite********
     kiteStartingX = game.world.centerX;
@@ -188,6 +193,7 @@ function out() {
 
 function actionOnClick () {
 
+    losstheme.stop();
     gameOverSound.stop();
     music.loop=true;
     music.play();
@@ -347,6 +353,7 @@ function xWindUpdate(){
 function lose() {
     music.stop();
     gameOverSound.play();
+    losstheme.play();
 
     // Game Over Text
     gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#fff'});
