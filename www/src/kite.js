@@ -215,7 +215,8 @@ function actionOnClick () {
 
 function update() {
 
-    distToRedLine = loseBoundary.y-kite.body.y ;
+    distToRedLine = loseBoundary.position.y+kiteStartingY + 400- kite.body.y ;
+    console.log(distToRedLine);
 
     if (playerIsAlive) {
         background.tilePosition.y += 10;
@@ -400,7 +401,11 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-    if (playerIsAlive){
-        loseBoundary.y -= 3;
+    if (playerIsAlive && distToRedLine>=350){
+        loseBoundary.y -= distToRedLine*0.04;
+    }
+
+    else{
+        loseBoundary.y-=3;
     }
 }
