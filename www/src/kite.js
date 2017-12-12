@@ -217,7 +217,7 @@ function update() {
 
     distToRedLine = loseBoundary.position.y+kiteStartingY + 400- kite.body.y ;
     console.log(distToRedLine);
-
+    
     if (playerIsAlive) {
         background.tilePosition.y += 10;
     }
