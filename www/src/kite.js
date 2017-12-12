@@ -66,9 +66,9 @@ var scoreText;
 var background;
 
 //scaling ratios//
-var powerUpScaleRatio = window.devicePixelRatio / 3;
+var powerUpScaleRatio = window.devicePixelRatio / 6;
 
-var kiteScaleRatio = window.devicePixelRatio / 2;
+var kiteScaleRatio = window.devicePixelRatio / 4;
 
 function create() {
 
@@ -195,6 +195,7 @@ function out() {
 }
 
 function actionOnClick () {
+    danger.start();
     losstheme.stop();
     gameOverSound.stop();
     music.loop=true;
@@ -266,19 +267,22 @@ function createPowerup() {
     var acceptableBelowYRange = (game.camera.y + game.camera.height) - kite.body.y - 50;
     var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
     var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
-    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 50;
+    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 150;
 
     if (playerIsAlive) {
-        var belowPowerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
-        belowPowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+        // var belowPowerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        // belowPowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
-        powerupsToCreate.push(belowPowerUp);
-        powerups.push(belowPowerUp);
+        // powerupsToCreate.push(belowPowerUp);
+        // powerups.push(belowPowerUp);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
             /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
             on top of the kite which ends up being confusing */
             var abovePowerUp = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
             abovePowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+            game.physics.enable(abovePowerUp, Phaser.Physics.P2JS);
+
+
 
             // add the above powerup to powerupsToCreate array
             powerupsToCreate.push(abovePowerUp);
@@ -288,7 +292,7 @@ function createPowerup() {
         for (powerup of powerupsToCreate) { // creates the powerups
             powerup.anchor.setTo(.5, .5);
             game.physics.enable(powerup, Phaser.Physics.P2JS);
-            powerup.body.velocity.y = 80;
+            powerup.body.velocity.y = 100;
             //powerup.checkWorldBounds = true;
             powerup.body.setCollisionGroup(powerupCollisionGroup);
             powerup.body.collides(kiteCollisionGroup);
@@ -380,7 +384,7 @@ function hitPowerup(kiteBody, powerupBody) {
     whoosh.play();
     powerupBody.sprite.kill();
     powerupBody.removeCollisionGroup(kiteCollisionGroup, true);
-    kite.body.velocity.y -= 300;
+    kite.body.velocity.y = - 300;
 }
 
 function CameraPan(){
@@ -410,7 +414,12 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-    if (playerIsAlive && distToRedLine>=350 && danger.volume>0){
+    if(playerIsAlive && distToRedLine<150){
+        loseBoundary.y-=0.5;
+
+    }
+    
+    else if(playerIsAlive && distToRedLine>=350 && danger.volume>0){
         danger.volume-=0.1;
         loseBoundary.y -= distToRedLine*0.05;
     }
@@ -420,8 +429,8 @@ function moveLoseBoundary() {
         
     // }
 
-    else if(playerIsAlive&& danger.volume<3){
-        loseBoundary.y-=3;
+    else if(playerIsAlive && danger.volume<2){
+        loseBoundary.y-=2;
         danger.volume+=0.1;
 
     }
