@@ -420,7 +420,7 @@ function moveLoseBoundary() {
         
     // }
 
-    else if(playerIsAlive&& danger.volume<4){
+    else if(playerIsAlive&& danger.volume<3){
         loseBoundary.y-=3;
         danger.volume+=0.1;
 
