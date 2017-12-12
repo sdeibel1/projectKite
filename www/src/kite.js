@@ -79,7 +79,7 @@ function create() {
 
     //***creating the audio files***//
 
-    music = game.add.audio('theme'); 
+    music = game.add.audio('theme');
     music.loop=true;
     music.play();
     collect=game.add.audio('collect');
