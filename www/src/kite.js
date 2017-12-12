@@ -39,8 +39,8 @@ var graphics;
 var loseBoundary;
 
 var playerIsAlive;
-var timer;
-var timer2;
+var powerupTimer;
+var loseBoundaryTimer;
 var loseTimer;
 
 var music;
@@ -96,9 +96,7 @@ function create() {
     // ********Creating the kite********
     kiteStartingX = game.world.centerX;
     kiteStartingY = game.world.height*.80;
-
     kite = game.add.sprite(kiteStartingX, kiteStartingY, 'kite');
-    //scales kite sprite for all devices
     kite.scale.setTo(kiteScaleRatio, kiteScaleRatio);
     kite.anchor.setTo(0.5, 0.5);
     game.physics.enable(kite, Phaser.Physics.P2JS);
@@ -118,20 +116,14 @@ function create() {
     startingPowerUp.anchor.setTo(0.5, 0.5);
     game.physics.enable(startingPowerUp, Phaser.Physics.P2JS);
 
-    // ********Adds tail********
-    //createRope(5, kite.x, kite.y + 20);
-
     // ********Collisions********
     kiteCollisionGroup = game.physics.p2.createCollisionGroup();
     powerupCollisionGroup = game.physics.p2.createCollisionGroup();
-
     kite.body.setCollisionGroup(kiteCollisionGroup);
     startingPowerUp.body.setCollisionGroup(powerupCollisionGroup);
     startingPowerUp.body.collides(kiteCollisionGroup);
-
     kite.body.collides(powerupCollisionGroup);
-
-    //game.physics.p2.updateBoundsCollisionGroup();
+    //game.physics.p2.updateBoundsCollisionGroup(); 
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
     kite.body.createBodyCallback(startingPowerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
@@ -151,20 +143,16 @@ function create() {
     game.camera.y = kite.y;
     game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1); //comment this out to go back to the old camera
 
-    playerIsAlive = true;
-
-    // ********Timer********
-    timer = game.time.create(false);
-    timer.loop(2500, createPowerup, this);
-    // timer.loop(10000,createGoon,this);
-    timer.start();
-
-    timer2 = game.time.create(false);
+    // ********Timers********
+    powerupTimer = game.time.create(false);
+    powerupTimer.loop(2500, createPowerup, this);
+    // powerupTimer.loop(10000,createGoon,this);
+    powerupTimer.start();
+    loseBoundaryTimer = game.time.create(false); 
     loseTimer = game.time.create(false);
     loseTimer.loop(50, moveLoseBoundary, this);
     loseTimer.start();
-
-    // timer2.add(500, game.camera.unfollow, this);
+    // loseBoundaryTimer.add(500, game.camera.unfollow, this);
 
     // ********Lose boundary********
     graphics = game.add.graphics();
@@ -173,15 +161,7 @@ function create() {
     loseBoundary = graphics.drawRect(0, kiteStartingY + 400, game.world.width, 15);
     graphics.endFill();
   
-}
-
-function kiteOut(kite) {
-    //kite.reset(0, kite.y);
-    if(kite.body.x - kite.width/2 <= 0) {
-      kite.body.x = game.width - kite.width/2;
-    } else if(kite.body.x + kite.width/2 >= game.width) {
-      kite.body.x = 0 + kite.width/2;
-    }
+    playerIsAlive = true;
 }
 
 //********Button Controls********
@@ -218,20 +198,14 @@ function actionOnClick () {
     playerIsAlive = true;
 }
 
-
-//******* Movement Controls ***********
-
 function update() {
-
-    distToRedLine = loseBoundary.position.y+kiteStartingY + 400- kite.body.y ;
     console.log(danger.volume);
-  
 
     if (playerIsAlive) {
         background.tilePosition.y += 10;
     }
-    updateKiteAngle();
 
+    distToRedLine = loseBoundary.position.y + kiteStartingY + 400 - kite.body.y ;
     if(playerIsAlive == true && kite.body.y >= loseBoundary.position.y + kiteStartingY + 400) { // For some reason loseBoundary.worldPosition.y is negative, so I multiply by -1
       lose();
     }
@@ -242,17 +216,17 @@ function update() {
         }
     }
 
+    updateKiteAngle();
     kite.body.velocity.y += 2.5; // Gravity
+    game.world.wrap(kite.body, 10);
 
     keyboardControls.update();
 
     altitude =  Math.round(kiteStartingY - kite.body.y);
-    if(altitude >= score) {
+    if (altitude >= score) {
         score = altitude;
     }
     scoreText.setText(score + " ft");
-
-    game.world.wrap(kite.body, 10);
 }
 
 function render() {
@@ -282,8 +256,6 @@ function createPowerup() {
             abovePowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
             game.physics.enable(abovePowerUp, Phaser.Physics.P2JS);
 
-
-
             // add the above powerup to powerupsToCreate array
             powerupsToCreate.push(abovePowerUp);
             powerups.push(abovePowerUp);
@@ -293,7 +265,6 @@ function createPowerup() {
             powerup.anchor.setTo(.5, .5);
             game.physics.enable(powerup, Phaser.Physics.P2JS);
             powerup.body.velocity.y = 100;
-            //powerup.checkWorldBounds = true;
             powerup.body.setCollisionGroup(powerupCollisionGroup);
             powerup.body.collides(kiteCollisionGroup);
             kite.body.createBodyCallback(powerup, hitPowerup, this);
@@ -307,7 +278,7 @@ function Boost(){
 }
 
 function yAcclCap(){
-    if(kite.body.velocity.y>400){
+    if (kite.body.velocity.y>400) {
         kite.body.velocity.y=400;
     } else if (kite.body.velocity.y<-600){
         kite.body.velocity.y=-600;
@@ -315,7 +286,7 @@ function yAcclCap(){
 }
 
 function xAcclCap(){
-    if(kite.body.velocity.x>300){
+    if (kite.body.velocity.x>300) {
         kite.body.velocity.x=300;
     } else if (kite.body.velocity.x<-300){
         kite.body.velocity.x=-300;
@@ -353,33 +324,17 @@ function lose() {
     restartButton.onInputOut.add(out, this);
     restartButton.onInputUp.add(up, this);
 
-    game.camera.unfollow();
-
-    scoreText.visible = false;
-
-    // powerUp.kill();
-
     kite.kill();
     for (powerup of powerups) {
         powerup.kill();
     }
-
-
+    game.camera.unfollow();
+    scoreText.visible = false;
     powerupsToCreate = [];
-
     playerIsAlive = false;
   }
 
-function boundaryCollisions() {
-  if(kite.body.x == 0) {
-    //kite.body.x = game.width;
-  } else if(kite.body.x = game.width) {
-    //kite.body.x = 0;
-  }
-}
-
 function hitPowerup(kiteBody, powerupBody) {
-
     collect.play();
     whoosh.play();
     powerupBody.sprite.kill();
@@ -387,26 +342,20 @@ function hitPowerup(kiteBody, powerupBody) {
     kite.body.velocity.y = - 300;
 }
 
-function CameraPan(){
-    game.camera.y += -2;
-}
-
 function updateKiteAngle(){
-         if(kite.body.angle>45){
-            kite.body.angle=45;
-        }
+    if (kite.body.angle>45) {
+        kite.body.angle=45;
+    }
+    if (kite.body.angle<-45) {
+        kite.body.angle=-45;
+    }
 
-
-        if(kite.body.angle<-45){
-            kite.body.angle=-45;
-        }
-
-        kite.body.angle = kite.body.velocity.x/8;
+    kite.body.angle = kite.body.velocity.x/8;
 }
 
 function catchUpToKite() {
     game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1);
-    timer2.start();
+    loseBoundaryTimer.start();
 }
 
 function unfollowKite() {
@@ -414,25 +363,22 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-    if(playerIsAlive && distToRedLine<150){
+    if (playerIsAlive && distToRedLine<150) {
         loseBoundary.y-=0.5;
 
-    }
-    
-    else if(playerIsAlive && distToRedLine>=350 && danger.volume>0){
+    } else if(playerIsAlive && distToRedLine>=350 && danger.volume>0) {
         danger.volume-=0.1;
         loseBoundary.y -= distToRedLine*0.05;
     }
 
-    // else if(playerIsAlive && distToRedLine<350){
+    // else if (playerIsAlive && distToRedLine<350) {
     //     danger.volume+=0.1;
         
     // }
 
-    else if(playerIsAlive && danger.volume<2){
+    else if (playerIsAlive && danger.volume<2) {
         loseBoundary.y-=2;
         danger.volume+=0.1;
-
     }
     
 }
