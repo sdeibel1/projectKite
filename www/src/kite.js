@@ -38,11 +38,6 @@ var loseTimer;
 var restartButton;
 var gameOverText;
 var powerupsToCreate = [];
-<<<<<<< HEAD
-var goonsToCreate = [];
-var goons = [];
-=======
->>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 var powerups = [];
 var altitude;
 var floatLinks = []; // The number of pieces in the string
@@ -103,17 +98,8 @@ function create() {
     powerupCollisionGroup = game.physics.p2.createCollisionGroup();
 
     kite.body.setCollisionGroup(kiteCollisionGroup);
-<<<<<<< HEAD
-    powerUp.body.setCollisionGroup(powerupCollisionGroup);
-    goon.body.setCollisionGroup(goonCollisionGroup);
-
-    kite.body.collides([powerupCollisionGroup,goonCollisionGroup]);
-    powerUp.body.collides(kiteCollisionGroup);
-    goon.body.collides(kiteCollisionGroup);
-=======
     startingPowerUp.body.setCollisionGroup(powerupCollisionGroup);
     startingPowerUp.body.collides(kiteCollisionGroup);
->>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 
     kite.body.collides(powerupCollisionGroup);
 
@@ -300,7 +286,6 @@ function createPowerup() {
     powerupsToCreate = [];
 }
 
-<<<<<<< HEAD
 
 function createGoon() {
     // Calculating the positions for the powerups that will be created
@@ -343,8 +328,6 @@ function createGoon() {
     goonsToCreate = [];
 }
 
-=======
->>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 function Boost(){
     kite.body.velocity.y+= -10;
 }
@@ -430,7 +413,6 @@ function hitPowerup(kiteBody, powerupBody) {
     //console.log(kite.body.velocity.y);
 }
 
-<<<<<<< HEAD
 
 function hitGoon(kiteBody, goonBody){
 
@@ -442,8 +424,6 @@ function hitGoon(kiteBody, goonBody){
     }
 
 
-=======
->>>>>>> 64b13dd153e3dbadb6df94a506e48fce6cce55c4
 function boostUp() {
     kite.body.velocity.y -= 60;
 }
