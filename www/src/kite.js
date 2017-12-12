@@ -402,10 +402,11 @@ function unfollowKite() {
 
 function moveLoseBoundary() {
     if (playerIsAlive && distToRedLine>=350){
-        loseBoundary.y -= distToRedLine*0.04;
+        loseBoundary.y -= distToRedLine*0.05;
     }
 
-    else{
+    else if(playerIsAlive){
         loseBoundary.y-=3;
     }
+    
 }
