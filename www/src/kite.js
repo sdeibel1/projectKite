@@ -260,22 +260,20 @@ function createPowerup() {
     var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 50;
 
     if (playerIsAlive) {
-        // this powerup will go below the kite (so that the player has a chance of getting it)
-        var powerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
-        powerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+        var belowPowerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
+        belowPowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
-        powerupsToCreate.push(powerUp);
-        powerups.push(powerUp);
+        powerupsToCreate.push(belowPowerUp);
+        powerups.push(belowPowerUp);
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
             /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
             on top of the kite which ends up being confusing */
-            // add the above powerup to powerupsToCreate array
-            // this powerup will go above the kite
-            var powerUp2 = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
-            powerUp2.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
+            var abovePowerUp = game.add.sprite(randomX2, aboveKiteY, 'powerUp');
+            abovePowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
 
-            powerupsToCreate.push(powerUp2);
-            powerups.push(powerUp2);
+            // add the above powerup to powerupsToCreate array
+            powerupsToCreate.push(abovePowerUp);
+            powerups.push(abovePowerUp);
         }
 
         for (powerup of powerupsToCreate) { // creates the powerups
@@ -330,15 +328,12 @@ function lose() {
     losstheme.loop=true;
     losstheme.play();
 
-    // Game Over Text
     gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#fff'});
     gameOverText.anchor.setTo(0.5);
 
-    // High Score Text
     highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score:'+ score, { font: '20px Arial', fill: '#fff'});
     highScoreText.anchor.setTo(0.5);
 
-    // Restart Button
     restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 25, 'restartButton', actionOnClick, this, 2, 1, 0);
     restartButton.onInputOver.add(over, this);
     restartButton.onInputOut.add(out, this);
@@ -350,7 +345,6 @@ function lose() {
 
     // powerUp.kill();
 
-    // Kill everything
     kite.kill();
     for (powerup of powerups) {
         powerup.kill();
