@@ -15,6 +15,8 @@ function preload() {
         game.load.audio('gameOverSound','assets/audio/lose.wav');
         game.load.audio('losstheme','assets/audio/losstheme.wav');
         game.load.audio('whoosh','assets/audio/whoosh.wav');
+        game.load.audio('danger','assets/audio/danger.wav');
+
 
 
 }
@@ -46,6 +48,7 @@ var collect;
 var gameOverSound;
 var losstheme;
 var whoosh;
+var danger;
 
 var restartButton;
 var gameOverText;
@@ -86,6 +89,9 @@ function create() {
     gameOverSound=game.add.audio('gameOverSound');
     losstheme=game.add.audio('losstheme');
     whoosh=game.add.audio('whoosh');
+    danger=game.add.audio('danger');
+    danger.loop=true;
+    danger.play();
 
     // ********Creating the kite********
     kiteStartingX = game.world.centerX;
@@ -166,6 +172,7 @@ function create() {
     graphics.lineStyle(2, 0xff0000, 1);
     loseBoundary = graphics.drawRect(0, kiteStartingY + 400, game.world.width, 15);
     graphics.endFill();
+  
 }
 
 function kiteOut(kite) {
@@ -216,8 +223,9 @@ function actionOnClick () {
 function update() {
 
     distToRedLine = loseBoundary.position.y+kiteStartingY + 400- kite.body.y ;
-    console.log(distToRedLine);
-    
+    console.log(danger.volume);
+  
+
     if (playerIsAlive) {
         background.tilePosition.y += 10;
     }
@@ -325,6 +333,7 @@ function xWindUpdate(){
 
 function lose() {
     music.stop();
+    danger.stop();
     gameOverSound.play();
     losstheme.loop=true;
     losstheme.play();
@@ -401,11 +410,20 @@ function unfollowKite() {
 }
 
 function moveLoseBoundary() {
-    if (playerIsAlive && distToRedLine>=350){
-        loseBoundary.y -= distToRedLine*0.04;
+    if (playerIsAlive && distToRedLine>=350 && danger.volume>0){
+        danger.volume-=0.1;
+        loseBoundary.y -= distToRedLine*0.05;
     }
 
-    else{
+    // else if(playerIsAlive && distToRedLine<350){
+    //     danger.volume+=0.1;
+        
+    // }
+
+    else if(playerIsAlive&& danger.volume<3){
         loseBoundary.y-=3;
+        danger.volume+=0.1;
+
     }
+    
 }
