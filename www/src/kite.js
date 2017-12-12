@@ -80,8 +80,7 @@ function create() {
 
     background = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'bigClouds');
 
-    //***creating the audio files***//
-
+    // ********creating the audio files********
     music = game.add.audio('theme');
     music.loop=true;
     music.play();
@@ -175,19 +174,22 @@ function out() {
 }
 
 function actionOnClick () {
-    danger.start();
+    danger.play();
     losstheme.stop();
     gameOverSound.stop();
-    music.loop=true;
+    music.loop = true;
     music.play();
-    loseBoundary.moveTo(0, kiteStartingY + 400);
-    kite.revive();
+
     restartButton.visible = false;
     gameOverText.visible = false;
     highScoreText.visible = false;
     background.visible = true;
     scoreText.visible = true;
 
+    loseBoundary.moveTo(0, kiteStartingY + 400);
+    console.log("LOSE BOUNDARY Y: " + (loseBoundary.position.y + kiteStartingY + 400));
+
+    kite.revive();
     kite.body.x = game.world.centerX;
     kite.body.y = kiteStartingY;
     kite.body.velocity.x = 0;
@@ -199,7 +201,7 @@ function actionOnClick () {
 }
 
 function update() {
-    console.log(danger.volume);
+    // console.log(danger.volume);
 
     if (playerIsAlive) {
         background.tilePosition.y += 10;
@@ -227,10 +229,6 @@ function update() {
         score = altitude;
     }
     scoreText.setText(score + " ft");
-}
-
-function render() {
-    game.debug.cameraInfo(game.camera, 32, 32);
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
@@ -273,40 +271,8 @@ function createPowerup() {
     powerupsToCreate = [];
 }
 
-function Boost(){
-    kite.body.velocity.y+= -10;
-}
-
-function yAcclCap(){
-    if (kite.body.velocity.y>400) {
-        kite.body.velocity.y=400;
-    } else if (kite.body.velocity.y<-600){
-        kite.body.velocity.y=-600;
-    }
-}
-
-function xAcclCap(){
-    if (kite.body.velocity.x>300) {
-        kite.body.velocity.x=300;
-    } else if (kite.body.velocity.x<-300){
-        kite.body.velocity.x=-300;
-    }
-}
-
-function collisionHandler(kite, powerUp) {
-    powerUp.kill();
-    kite.body.velocity.y=-350;
-}
-
-function yWindUpdate(){
-    kite.body.velocity.y+=wind;
-}
-
-function xWindUpdate(){
-    kite.body.velocity.x+=wind;
-}
-
 function lose() {
+    playerIsAlive = false;
     music.stop();
     danger.stop();
     gameOverSound.play();
@@ -331,7 +297,6 @@ function lose() {
     game.camera.unfollow();
     scoreText.visible = false;
     powerupsToCreate = [];
-    playerIsAlive = false;
   }
 
 function hitPowerup(kiteBody, powerupBody) {
@@ -339,7 +304,7 @@ function hitPowerup(kiteBody, powerupBody) {
     whoosh.play();
     powerupBody.sprite.kill();
     powerupBody.removeCollisionGroup(kiteCollisionGroup, true);
-    kite.body.velocity.y = - 300;
+    kite.body.velocity.y = -300;
 }
 
 function updateKiteAngle(){
@@ -350,35 +315,22 @@ function updateKiteAngle(){
         kite.body.angle=-45;
     }
 
-    kite.body.angle = kite.body.velocity.x/8;
-}
-
-function catchUpToKite() {
-    game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1, .1);
-    loseBoundaryTimer.start();
-}
-
-function unfollowKite() {
-    game.camera.unfollow();
+    kite.body.angle = kite.body.velocity.x / 8;
 }
 
 function moveLoseBoundary() {
-    if (playerIsAlive && distToRedLine<150) {
-        loseBoundary.y-=0.5;
-
-    } else if(playerIsAlive && distToRedLine>=350 && danger.volume>0) {
-        danger.volume-=0.1;
-        loseBoundary.y -= distToRedLine*0.05;
+    if (playerIsAlive && distToRedLine < 150) {
+        loseBoundary.y -= 0.5;
+    } else if(playerIsAlive && distToRedLine  >=350 && danger.volume > 0) {
+        danger.volume -= 0.1;
+        loseBoundary.y -= distToRedLine * 0.05;
+    } else if (playerIsAlive && danger.volume < 2) {
+        loseBoundary.y -= 2;
+        danger.volume += 0.1;
     }
 
     // else if (playerIsAlive && distToRedLine<350) {
     //     danger.volume+=0.1;
         
     // }
-
-    else if (playerIsAlive && danger.volume<2) {
-        loseBoundary.y-=2;
-        danger.volume+=0.1;
-    }
-    
 }
