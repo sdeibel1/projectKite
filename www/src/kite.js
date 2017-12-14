@@ -144,7 +144,7 @@ function create() {
 
     // ********Timers********
     powerupTimer = game.time.create(false);
-    powerupTimer.loop(2500, createPowerup, this);
+    powerupTimer.loop(1500, createPowerup, this);
     // powerupTimer.loop(10000,createGoon,this);
     powerupTimer.start();
     loseBoundaryTimer = game.time.create(false); 
