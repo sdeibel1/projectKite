@@ -123,10 +123,13 @@ function create() {
 
     // ********Creating altitude text********
     altitude =  Math.round(kiteStartingY - kite.body.y);
-    scoreText = game.add.text(0, 0, "0", {font: '24px Arial', fill: '#B03A2E', align: "left"});
+    scoreText = game.add.text(0, 0, "0", {font: '20px Arial', fill: '#B03A2E', align: "right"});
     scoreText.fixedToCamera = true;
     scoreText.cameraOffset.setTo(game.world.width - 10, 10);
     scoreText.anchor.setTo(1, 0);
+    currentScore = game.add.text(0, 0, "0", {font: '20px Arial', fill: '#B03A2E', align: "left"});
+    currentScore.fixedToCamera = true;
+    currentScore.cameraOffset.setTo(10, 10);
 
     // ********Setting up controls********
     keyboardControls = new KeyboardControls(game.input, kite);
@@ -175,6 +178,7 @@ function actionOnClick () {
     highScoreText.visible = false;
     background.visible = true;
     scoreText.visible = true;
+    currentScore.visible = true;
 
     loseBoundary.y = kiteStartingY + 400;
     console.log("LOSE BOUNDARY Y: " + (loseBoundary.position.y + kiteStartingY + 400));
@@ -225,6 +229,7 @@ function update() {
         score = altitude;
     }
     scoreText.setText("High Score\n       " + score + " ft");
+    currentScore.setText("Current Score\n " + altitude + " ft");
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
@@ -287,6 +292,7 @@ function lose() {
     }
     game.camera.unfollow();
     scoreText.visible = false;
+    currentScore.visible = false;
     powerupsToCreate = [];
   }
 
