@@ -144,7 +144,7 @@ function create() {
 
     // ********Timers********
     powerupTimer = game.time.create(false);
-    powerupTimer.loop(1500, createPowerup, this);
+    powerupTimer.loop(1000, createPowerup, this);
     // powerupTimer.loop(10000,createGoon,this);
     powerupTimer.start();
     loseBoundaryTimer = game.time.create(false); 
@@ -212,11 +212,11 @@ function update() {
       lose();
     }
 
-    for (powerup of powerups) {
-        if (powerup.body.velocity.y <= 20) {
-            powerup.kill();
-        }
-    }
+    // for (powerup of powerups) {
+    //     if (powerup.body.velocity.y <= 20) {
+    //         powerup.kill();
+    //     }
+    // }
 
     updateKiteAngle();
     kite.body.velocity.y += 2.5; // Gravity
@@ -239,7 +239,7 @@ function createPowerup() {
     var acceptableBelowYRange = (game.camera.y + game.camera.height) - kite.body.y - 50;
     var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
     var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
-    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 150;
+    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 225;
 
     if (playerIsAlive) {
         // var belowPowerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
@@ -262,7 +262,7 @@ function createPowerup() {
         for (powerup of powerupsToCreate) { // creates the powerups
             powerup.anchor.setTo(.5, .5);
             game.physics.enable(powerup, Phaser.Physics.P2JS);
-            powerup.body.velocity.y = 100;
+            powerup.body.velocity.y = kite.body.velocity.y +400;
             powerup.body.setCollisionGroup(powerupCollisionGroup);
             powerup.body.collides(kiteCollisionGroup);
             kite.body.createBodyCallback(powerup, hitPowerup, this);
