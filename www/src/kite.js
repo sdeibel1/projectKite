@@ -229,7 +229,7 @@ function update() {
         score = altitude;
     }
     scoreText.setText("High Score\n       " + score + " ft");
-    currentScore.setText("Current Score\n " + altitude + " ft");
+    currentScore.setText( altitude + " ft");
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
