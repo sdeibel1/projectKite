@@ -3,6 +3,9 @@ var game = new Phaser.Game(360, 640, Phaser.AUTO, 'project-kite',{ preload: prel
 function preload() {
         //scaling window for all devices
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //game.scale.forceOrientation(false,true);
+        //game.scale.enterIncorrectOrientation.add(handleIncorrect);
+        //game.scale.leaveIncorrectOrientation.add(handleIncorrect);
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
@@ -198,6 +201,18 @@ function actionOnClick () {
     game.camera.y = kite.body.y;
     game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1 ,.1);
     playerIsAlive = true;
+}
+
+//functions for handling screen rotation
+function handleIncorrect(){
+    if(!game.device.desktop){
+        document.getElementById("turn").style.display="block";
+    }
+}
+function handleCorrect(){
+    if(!game.device.desktop){
+        document.getElementById("turn").style.display="none";
+    }
 }
 
 function update() {
