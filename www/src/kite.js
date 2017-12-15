@@ -54,14 +54,9 @@ var gameOverText;
 var powerupsToCreate = [];
 var powerups = [];
 var altitude;
-var floatLinks = []; // The number of pieces in the string
-var lastRect;
-var wind = 0;
 var startingPowerUp;
-var windUp = -10;
-var windUpVariance = 0;
 var scoreText;
-
+var distToRedLine;
 var background;
 
 //scaling ratios//
@@ -151,7 +146,7 @@ function create() {
 
     // ********Timers********
     powerupTimer = game.time.create(false);
-    powerupTimer.loop(2500, createPowerup, this);
+    powerupTimer.loop(1500, createPowerup, this);
     powerupTimer.start();
 
     playerIsAlive = true;
@@ -209,6 +204,8 @@ function handleCorrect(){
 
 function update() {
     //console.log(loseBoundary.position.y + kiteStartingY + 400 + "\n" + kite.body.y);
+    distToRedLine = loseBoundary.y - kite.body.y;
+
     if (playerIsAlive) {
         moveLoseBoundary();
         adjustLoseVolume();
@@ -236,17 +233,12 @@ function createPowerup() {
     // Calculating the positions for the powerups that will be created
     var randomX = 1 + Math.random()*(game.world.width-2);
     var randomX2 = 1 + Math.random()*(game.world.width-2);
-    var acceptableBelowYRange = (game.camera.y + game.camera.height) - kite.body.y - 50;
     var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
-    var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
     var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 225;
 
     if (playerIsAlive) {
-        var belowPowerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
-        belowPowerUp.scale.setTo(powerUpScaleRatio,powerUpScaleRatio);
-
-        powerupsToCreate.push(belowPowerUp);
-        powerups.push(belowPowerUp);
+       
+       
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
             /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
             on top of the kite which ends up being confusing */
@@ -321,11 +313,18 @@ function updateKiteAngle(){
 function moveLoseBoundary() {
     console.log(kite.body.y, loseBoundary.y);
     var loseBoundarySpeed = 0.02;
+    if (playerIsAlive && distToRedLine>=500){
+        loseBoundarySpeed = 0.1;  
+    }
+
+    else{
+        loseBoundarySpeed=0.02;
+    }
+
     loseBoundary.y -= loseBoundarySpeed * this.game.time.elapsed;
 }
 
 function adjustLoseVolume() {
-    distToRedLine = loseBoundary.y - kite.body.y;
     if (distToRedLine >= 350 && danger.volume > 0) {
         danger.volume -= .1;
     } else if (danger.volume < 2) {
