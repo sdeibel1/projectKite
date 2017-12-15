@@ -146,9 +146,9 @@ function create() {
 
     // ********Timers********
     powerupTimer = game.time.create(false);
-    powerupTimer.loop(1500, createPowerup, this);
+    console.log(altitude);
+    increaseDifficulty();
     powerupTimer.start();
-
     playerIsAlive = true;
 }
 
@@ -327,5 +327,20 @@ function adjustLoseVolume() {
         danger.volume -= .1;
     } else if (danger.volume < 2) {
         danger.volume += .1;
+    }
+}
+
+function increaseDifficulty(){
+     if(altitude<1000){
+        powerupTimer.loop(500, createPowerup, this);
+
+    }
+
+    else if(altitude>=1000 && altitude< 1500){
+        powerupTimer.loop(2500, createPowerup, this);
+    }
+
+    else if(altitude>=1500){
+        powerupTimer.loop(3500, createPowerup, this);
     }
 }
