@@ -2,7 +2,7 @@ var game = new Phaser.Game(360, 640, Phaser.AUTO, 'project-kite',{ preload: prel
 
 function preload() {
         //scaling window for all devices
-        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
         //game.scale.forceOrientation(false,true);
         //game.scale.enterIncorrectOrientation.add(handleIncorrect);
         //game.scale.leaveIncorrectOrientation.add(handleIncorrect);
@@ -28,7 +28,7 @@ var powerupCollisionGroup;
 var keyboardControls;
 
 var cameraYmin;
-
+var bum;
 var kite;
 var kiteStartingX;
 var kiteStartingY;
@@ -116,7 +116,7 @@ function create() {
     startingPowerUp.body.setCollisionGroup(powerupCollisionGroup);
     startingPowerUp.body.collides(kiteCollisionGroup);
     kite.body.collides(powerupCollisionGroup);
-    //game.physics.p2.updateBoundsCollisionGroup(); 
+    //game.physics.p2.updateBoundsCollisionGroup();
     // these next 2 lines assign a callback for when the kite hits a powerup (this callback is the hitPowerup function)
     kite.body.createBodyCallback(startingPowerUp, hitPowerup, this);
     game.physics.p2.setImpactEvents(true);
@@ -236,8 +236,8 @@ function createPowerup() {
     var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 225;
 
     if (playerIsAlive) {
-       
-       
+
+
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
             /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
             on top of the kite which ends up being confusing */
@@ -312,7 +312,7 @@ function updateKiteAngle(){
 function moveLoseBoundary() {
     var loseBoundarySpeed = 0.02;
     if (playerIsAlive && distToRedLine>=500){
-        loseBoundarySpeed = 0.1;  
+        loseBoundarySpeed = 0.1;
     }
 
     else{

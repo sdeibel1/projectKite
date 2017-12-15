@@ -1,3 +1,6 @@
+
+
+// Sets up the keyboard controls when game is played on browser
 class KeyboardControls {
     constructor(input, kite) {
         this.kite = kite;
@@ -17,6 +20,8 @@ class KeyboardControls {
     }
 }
 
+
+// Sets up mouse controls on browser and finger touch controls on mobile
 class GestureControls {
     constructor(input, kite) {
         this.input = input
@@ -36,7 +41,7 @@ class GestureControls {
     }
 
     onTouchUp() {
-        this.pointerIsDown = false;    
+        this.pointerIsDown = false;
     }
 
     onTouchMove(pointer, x, y, fromClick) {
