@@ -123,7 +123,7 @@ function create() {
 
     // ********Creating altitude text********
     altitude =  Math.round(kiteStartingY - kite.body.y);
-    scoreText = game.add.text(0, 0, "0", {font: '19px Arial', fill: '#fff', align: "left"});
+    scoreText = game.add.text(0, 0, "0", {font: '24px Arial', fill: '#B03A2E', align: "left"});
     scoreText.fixedToCamera = true;
     scoreText.cameraOffset.setTo(game.world.width - 10, 10);
     scoreText.anchor.setTo(1, 0);
@@ -225,7 +225,7 @@ function update() {
     if (altitude >= score) {
         score = altitude;
     }
-    scoreText.setText(score + " ft");
+    scoreText.setText("High Score\n       " + score + " ft");
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
@@ -271,10 +271,10 @@ function lose() {
     losstheme.loop=true;
     losstheme.play();
 
-    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#fff'});
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 60, 'Game Over', { font: '20px Arial', fill: '#B03A2E'});
     gameOverText.anchor.setTo(0.5);
 
-    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score:'+ score, { font: '20px Arial', fill: '#fff'});
+    highScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 40, 'High Score : '+ score, { font: '20px Arial', fill: '#B03A2E'});
     highScoreText.anchor.setTo(0.5);
 
     restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 25, 'restartButton', actionOnClick, this, 2, 1, 0);

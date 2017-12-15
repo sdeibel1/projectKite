@@ -23,7 +23,7 @@ class GestureControls {
         this.kite = kite
 
         this.input.onDown.add(this.onTouchDown, this);
-        // this.input.onUp.add(this.onTouchUp, this);
+        this.input.onUp.add(this.onTouchUp, this);
         this.input.addMoveCallback(function(pointer, x, y, fromClick) {
             this.onTouchMove(pointer, x, y, fromClick);
         }, this);
