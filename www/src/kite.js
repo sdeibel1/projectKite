@@ -3,6 +3,9 @@ var game = new Phaser.Game(360, 640, Phaser.AUTO, 'project-kite',{ preload: prel
 function preload() {
         //scaling window for all devices
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //game.scale.forceOrientation(false,true);
+        //game.scale.enterIncorrectOrientation.add(handleIncorrect);
+        //game.scale.leaveIncorrectOrientation.add(handleIncorrect);
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
@@ -192,6 +195,18 @@ function actionOnClick () {
     playerIsAlive = true;
 }
 
+//functions for handling screen rotation
+function handleIncorrect(){
+    if(!game.device.desktop){
+        document.getElementById("turn").style.display="block";
+    }
+}
+function handleCorrect(){
+    if(!game.device.desktop){
+        document.getElementById("turn").style.display="none";
+    }
+}
+
 function update() {
     //console.log(loseBoundary.position.y + kiteStartingY + 400 + "\n" + kite.body.y);
     if (playerIsAlive) {
@@ -200,12 +215,6 @@ function update() {
         background.tilePosition.y += 10;
         if (kite.body.y >= loseBoundary.y) {
             lose();
-        }
-    }
-
-    for (powerup of powerups) {
-        if (powerup.body.velocity.y <= 20) {
-            powerup.kill();
         }
     }
 
@@ -230,7 +239,7 @@ function createPowerup() {
     var acceptableBelowYRange = (game.camera.y + game.camera.height) - kite.body.y - 50;
     var acceptableAboveYRange = kite.body.y - game.camera.y - 50;
     var belowKiteY = Math.random()*acceptableBelowYRange + kite.body.y + 50;
-    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 150;
+    var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 225;
 
     if (playerIsAlive) {
         var belowPowerUp = game.add.sprite(randomX, belowKiteY, 'powerUp');
@@ -253,7 +262,7 @@ function createPowerup() {
         for (powerup of powerupsToCreate) { // creates the powerups
             powerup.anchor.setTo(.5, .5);
             game.physics.enable(powerup, Phaser.Physics.P2JS);
-            powerup.body.velocity.y = 100;
+            powerup.body.velocity.y = kite.body.velocity.y +400;
             powerup.body.setCollisionGroup(powerupCollisionGroup);
             powerup.body.collides(kiteCollisionGroup);
             kite.body.createBodyCallback(powerup, hitPowerup, this);
