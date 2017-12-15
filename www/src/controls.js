@@ -23,7 +23,7 @@ class GestureControls {
         this.kite = kite
 
         this.input.onDown.add(this.onTouchDown, this);
-        // this.input.onUp.add(this.onTouchUp, this);
+        this.input.onUp.add(this.onTouchUp, this);
         this.input.addMoveCallback(function(pointer, x, y, fromClick) {
             this.onTouchMove(pointer, x, y, fromClick);
         }, this);
@@ -31,8 +31,8 @@ class GestureControls {
 
     onTouchDown() {
         this.pointerIsDown = true;
-        this.touchStartX = this.input.activePointer.x;
-        console.log(this.touchStartX);
+        // this.touchStartX = this.input.activePointer.x;
+        // console.log(this.touchStartX);
     }
 
     onTouchUp() {
@@ -41,8 +41,13 @@ class GestureControls {
 
     onTouchMove(pointer, x, y, fromClick) {
         if (this.pointerIsDown) {
-            var deltaX = this.input.activePointer.x - this.touchStartX;
-            this.kite.body.velocity.x = deltaX;
+            var deltaX = this.input.activePointer.x - this.kite.body.x;
+            if (deltaX < 25 && deltaX > 0) {
+                deltaX = 25;
+            } else if (deltaX > -25 && deltaX < 0) {
+                deltaX = -25;
+            }
+            this.kite.body.velocity.x = 1.8*deltaX;
         }
     }
 }

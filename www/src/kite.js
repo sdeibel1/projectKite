@@ -203,13 +203,12 @@ function handleCorrect(){
 }
 
 function update() {
-    //console.log(loseBoundary.position.y + kiteStartingY + 400 + "\n" + kite.body.y);
     distToRedLine = loseBoundary.y - kite.body.y;
 
     if (playerIsAlive) {
         moveLoseBoundary();
         adjustLoseVolume();
-        background.tilePosition.y += 10;
+        background.tilePosition.y -= kite.body.velocity.y / 20;
         if (kite.body.y >= loseBoundary.y) {
             lose();
         }
@@ -311,7 +310,6 @@ function updateKiteAngle(){
 }
 
 function moveLoseBoundary() {
-    console.log(kite.body.y, loseBoundary.y);
     var loseBoundarySpeed = 0.02;
     if (playerIsAlive && distToRedLine>=500){
         loseBoundarySpeed = 0.1;  
