@@ -47,11 +47,11 @@ class GestureControls {
     onTouchMove(pointer, x, y, fromClick) {
         if (this.pointerIsDown) {
             var deltaX = this.input.activePointer.x - this.kite.body.x;
-            if (deltaX < 25 && deltaX > 5) {
-                deltaX = 25;
-            } else if (deltaX > -25 && deltaX < 5) {
-                deltaX = -25;
-            }
+            // if (deltaX < 25 && deltaX > 5) {
+            //     deltaX = 25;
+            // } else if (deltaX > -25 && deltaX < 5) {
+            //     deltaX = -25;
+            // }
             this.kite.body.velocity.x = 1.8*deltaX;
         }
     }
