@@ -2,14 +2,26 @@ var game = new Phaser.Game(360, 640, Phaser.AUTO, 'project-kite',{ preload: prel
 
 function preload() {
         //scaling window for all devices
+<<<<<<< HEAD
         //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+=======
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //game.scale.forceOrientation(false,true);
+        //game.scale.enterIncorrectOrientation.add(handleIncorrect);
+        //game.scale.leaveIncorrectOrientation.add(handleIncorrect);
+>>>>>>> 7a574bc48635a43b5f1ae1c6848d931f61ffa1ef
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
+<<<<<<< HEAD
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.png', 100, 100);
+=======
+        game.load.spritesheet('powerUp','assets/images/wind.png', 76, 76);
+        game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
+>>>>>>> 7a574bc48635a43b5f1ae1c6848d931f61ffa1ef
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
         game.load.spritesheet('loseBoundary', 'assets/images/loseBoundary.png', 15, game.width);
         game.load.audio('theme','assets/audio/theme1.wav');
