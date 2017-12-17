@@ -1,13 +1,13 @@
 var game = new Phaser.Game(360, 640, Phaser.AUTO, 'project-kite',{ preload: preload, create: create, update: update}) ;
+var firstRunLandscape;
 
 function preload() {
         //scaling window for all devices
-        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //game.scale.forceOrientation(false,true);
-        //game.scale.enterIncorrectOrientation.add(handleIncorrect);
-        //game.scale.leaveIncorrectOrientation.add(handleIncorrect);
+        firstRunLandscape = game.scale.isGameLandscape;
+        game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
+        game.load.image('playPortrait', 'landscapeTextDisplay.png');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
@@ -20,12 +20,17 @@ function preload() {
         game.load.audio('losstheme','assets/audio/losstheme.wav');
         game.load.audio('whoosh','assets/audio/whoosh.wav');
         game.load.audio('danger','assets/audio/danger.wav');
+
+        game.scale.forceOrientation(false, true);
+        game.scale.enterIncorrectOrientation.add(handleIncorrect);
+        game.scale.leaveIncorrectOrientation.add(handleCorrect);
 }
 
 var kiteCollisionGroup;
 var powerupCollisionGroup;
 
 var keyboardControls;
+var gestureControls;
 
 var cameraYmin;
 
@@ -58,6 +63,7 @@ var startingPowerUp;
 var scoreText;
 var distToRedLine;
 var background;
+var portraitText;
 
 //scaling ratios//
 var powerUpScaleRatio = window.devicePixelRatio / 6;
@@ -132,8 +138,8 @@ function create() {
     currentScore.cameraOffset.setTo(10, 10);
 
     // ********Setting up controls********
-    keyboardControls = new KeyboardControls(game.input, kite);
-    gestureControls = new GestureControls(game.input, kite);
+    // keyboardControls = new KeyboardControls(game.input, kite);
+    gestureControls = new GestureControls(game.input, kite, game.time);
 
     // ********Camera********
     game.camera.y = kite.y;
@@ -150,9 +156,17 @@ function create() {
     // ********Timers********
     powerupTimer = game.time.create(false);
     console.log(altitude);
-    increaseDifficulty();
+    // increaseDifficulty();
+    powerupTimer.loop(1000, createPowerup, this);
     powerupTimer.start();
     playerIsAlive = true;
+
+    playPortrait = game.add.sprite(0, 0, 'playPortrait');
+    playPortrait.fixedToCamera = true;
+    playPortrait.visible = false;
+    portraitText = game.add.text(0, 0, "Please play in portrait mode.", {font: '20px Arial', fill: '#B03A2E', align: "right"});
+    portraitText.visible = false;
+
 }
 
 //********Button Controls********
@@ -212,7 +226,7 @@ function update() {
     if (playerIsAlive) {
         moveLoseBoundary();
         adjustLoseVolume();
-        background.tilePosition.y -= kite.body.velocity.y / 20;
+        background.tilePosition.y += 10 - kite.body.velocity.y / 20;
         if (kite.body.y >= loseBoundary.y) {
             lose();
         }
@@ -222,7 +236,7 @@ function update() {
     kite.body.velocity.y += 2.5; // Gravity
     game.world.wrap(kite.body, 10);
 
-    keyboardControls.update();
+    // keyboardControls.update();
 
     altitude =  Math.round(kiteStartingY - kite.body.y);
     if (altitude >= score) {
@@ -241,7 +255,6 @@ function createPowerup() {
     var aboveKiteY = kite.body.y - Math.random()*acceptableAboveYRange - 225;
 
     if (playerIsAlive) {
-       
        
         if (kite.body.y - 50 >= game.camera.y) { // if the kite isn't near the top of the screen
             /* Note: we don't want to spawn powerups if the kite is at the top of the screen because they are likely to spawn
@@ -348,5 +361,24 @@ function increaseDifficulty(){
 
     else if(altitude>=1500){
         powerupTimer.loop(3500, createPowerup, this);
+    }
+}
+
+// Source for these two methods: http://www.emanueleferonato.com/2015/04/23/how-to-lock-orientation-in-your-html5-responsive-game-using-phaser/
+function handleIncorrect(){
+        if (!game.device.desktop) {
+            document.getElementById("turn").style.display="block";
+        }
+    }
+
+function handleCorrect(){
+    if (!game.device.desktop) {
+        if (firstRunLandscape) {
+            gameRatio = window.innerWidth/window.innerHeight;       
+            game.width = Math.ceil(640*gameRatio);
+            game.height = 640;
+            game.renderer.resize(game.width,game.height);
+        }
+        document.getElementById("turn").style.display="none";
     }
 }
