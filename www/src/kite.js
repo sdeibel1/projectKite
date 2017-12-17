@@ -31,6 +31,9 @@ var kite;
 var kiteStartingX;
 var kiteStartingY;
 var score = 0;
+var reach3000;
+var reach6000;
+
 
 // Pertain to the lose boundary
 var graphics;
@@ -158,9 +161,12 @@ function create() {
     loseBoundary.y = kiteStartingY + 400;
 
     // ********Timers********
+    reach1000=false;
+    reach4000=false;
+
     powerupTimer = game.time.create(false);
     console.log(altitude);
-    increaseDifficulty();
+    powerupTimer.loop(500, createPowerup, this);
     powerupTimer.start();
     playerIsAlive = true;
 
@@ -229,7 +235,16 @@ function update() {
             lose();
         }
     }
-
+    if(playerIsAlive && score>=3000 && score<6000 && reach3000==false){
+        powerupTimer.removeAll();
+        powerupTimer.loop(1000, createPowerup, this);
+        reach3000=true;
+    }
+   if(playerIsAlive && score>=6000 && reach6000==false){
+        powerupTimer.removeAll();
+        powerupTimer.loop(1300, createPowerup, this);
+        reach6000=true;
+    }
     updateKiteAngle();
     kite.body.velocity.y += 2.5; // Gravity
     game.world.wrap(kite.body, 10);
@@ -348,7 +363,7 @@ function adjustLoseVolume() {
 
 function increaseDifficulty(){
      if(altitude<1000){
-        powerupTimer.loop(500, createPowerup, this);
+        rea
 
     }
 
