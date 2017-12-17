@@ -2,26 +2,14 @@ var game = new Phaser.Game(360, 640, Phaser.AUTO, 'project-kite',{ preload: prel
 
 function preload() {
         //scaling window for all devices
-<<<<<<< HEAD
         //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-=======
-        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //game.scale.forceOrientation(false,true);
-        //game.scale.enterIncorrectOrientation.add(handleIncorrect);
-        //game.scale.leaveIncorrectOrientation.add(handleIncorrect);
->>>>>>> 7a574bc48635a43b5f1ae1c6848d931f61ffa1ef
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
-<<<<<<< HEAD
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.png', 100, 100);
-=======
-        game.load.spritesheet('powerUp','assets/images/wind.png', 76, 76);
-        game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
->>>>>>> 7a574bc48635a43b5f1ae1c6848d931f61ffa1ef
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
         game.load.spritesheet('loseBoundary', 'assets/images/loseBoundary.png', 15, game.width);
         game.load.audio('theme','assets/audio/theme1.wav');
@@ -78,6 +66,7 @@ var moveArrow;
 var obstacleText;
 var redBarText;
 var instructionsTimer;
+var gameStart = 0;
 
 //scaling ratios//
 var powerUpScaleRatio = window.devicePixelRatio / 6;
@@ -184,7 +173,7 @@ function create() {
 }
 
 function updateCounter() {
-
+  gameStart = 1;
 }
 
 
@@ -301,7 +290,7 @@ function lose() {
     gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 130, 'Game Over', { font: '25px Arial', fill: '#F1503A'});
     gameOverText.anchor.setTo(0.5);
 
-    endScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 100, 'Score: '+ score, { font: '20px Arial', fill: '#2534F50'});
+    endScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 100, 'Score: '+ score + " ft", { font: '20px Arial', fill: '#2534F50'});
     endScoreText.anchor.setTo(0.5);
 
     restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 80, 'restartButton', actionOnClick);
@@ -375,6 +364,13 @@ function increaseDifficulty(){
 
 // Displays instructions for the first 5 seconds of the game
 function showInstructions() {
+  moveText.visible = true;
+}
 
-
+function instructionsCondition() {
+  if(gameStart == 0) {
+    showInstructions();
+  } else if(gameStart == 1) {
+    actionOnClick();
+  }
 }
