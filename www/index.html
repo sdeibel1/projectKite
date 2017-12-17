@@ -4,15 +4,30 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <title>Project Kite</title>
-        <style media="screen">
-          html, body {
-            margin: 0;
-            padding: 0;
-          }
+        <!-- Source for orientation lock code (#turn): http://www.emanueleferonato.com/2015/04/23/how-to-lock-orientation-in-your-html5-responsive-game-using-phaser/-->
+        <style>
+            body{
+                margin:0px;
+                padding:0px;
+            }
+
+            #turn{
+                width:100%;
+                height:100%;
+                position:fixed;
+                top:0px;
+                left:0px;
+                background-color:white;
+                background-image:url('assets/images/landscapeTextDisplay.png');
+                background-repeat:no-repeat;
+                background-position: center center;
+                display:none;
+            }
         </style>
         <script type="text/javascript" src="lib/phaser.min.js"></script>
     </head>
     <body>
+        <div id = "turn"></div>
         <script type="text/javascript" src="cordova.js"></script>
         <script src="src/controls.js"></script>
         <script src="src/kite.js"></script>

@@ -23,10 +23,16 @@ class KeyboardControls {
 
 // Sets up mouse controls on browser and finger touch controls on mobile
 class GestureControls {
-    constructor(input, kite) {
+    constructor(input, kite, time) {
         this.input = input
         this.kite = kite
-
+        this.time = time;
+        this.moveTimer = this.time.create(false);
+        // this.moveTimer.loop(100, function(){
+        //     this.getX();
+        // }, this);
+        this.moveTimer.start();
+ 
         this.input.onDown.add(this.onTouchDown, this);
         this.input.onUp.add(this.onTouchUp, this);
         this.input.addMoveCallback(function(pointer, x, y, fromClick) {
@@ -34,10 +40,13 @@ class GestureControls {
         }, this);
     }
 
+    getX() {
+        this.prevX = this.input.activePointer.x;
+    }
+
     onTouchDown() {
         this.pointerIsDown = true;
-        // this.touchStartX = this.input.activePointer.x;
-        // console.log(this.touchStartX);
+        this.prevX = this.input.activePointer.x;
     }
 
     onTouchUp() {
@@ -47,12 +56,10 @@ class GestureControls {
     onTouchMove(pointer, x, y, fromClick) {
         if (this.pointerIsDown) {
             var deltaX = this.input.activePointer.x - this.kite.body.x;
-            // if (deltaX < 25 && deltaX > 5) {
-            //     deltaX = 25;
-            // } else if (deltaX > -25 && deltaX < 5) {
-            //     deltaX = -25;
-            // }
             this.kite.body.velocity.x = 1.8*deltaX;
+
+            // var deltaX = this.input.activePointer.x - this.prevX;
+            // this.kite.body.velocity.x = deltaX;
         }
     }
 }

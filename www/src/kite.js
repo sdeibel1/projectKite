@@ -1,15 +1,26 @@
 var game = new Phaser.Game(360, 640, Phaser.AUTO, 'project-kite',{ preload: preload, create: create, update: update}) ;
+var firstRunLandscape;
 
 function preload() {
         //scaling window for all devices
+<<<<<<< HEAD
         //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+=======
+        firstRunLandscape = game.scale.isGameLandscape;
+>>>>>>> ea08cd1c8600f8fb72915abc60045c6540cc6dee
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
+        game.load.image('playPortrait', 'landscapeTextDisplay.png');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
+<<<<<<< HEAD
         game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
         game.load.spritesheet('restartButton', 'assets/images/restartButton.png', 100, 100);
+=======
+        game.load.spritesheet('powerUp','assets/images/wind.png', 76, 76);
+        game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
+>>>>>>> ea08cd1c8600f8fb72915abc60045c6540cc6dee
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
         game.load.spritesheet('loseBoundary', 'assets/images/loseBoundary.png', 15, game.width);
         game.load.audio('theme','assets/audio/theme1.wav');
@@ -18,12 +29,17 @@ function preload() {
         game.load.audio('losstheme','assets/audio/losstheme.wav');
         game.load.audio('whoosh','assets/audio/whoosh.wav');
         game.load.audio('danger','assets/audio/danger.wav');
+
+        game.scale.forceOrientation(false, true);
+        game.scale.enterIncorrectOrientation.add(handleIncorrect);
+        game.scale.leaveIncorrectOrientation.add(handleCorrect);
 }
 
 var kiteCollisionGroup;
 var powerupCollisionGroup;
 
 var keyboardControls;
+var gestureControls;
 
 var cameraYmin;
 var bum;
@@ -62,6 +78,7 @@ var startingPowerUp;
 var playingScoreText;
 var distToRedLine;
 var background;
+var portraitText;
 
 // Inctruction variables
 var moveText;
@@ -145,8 +162,8 @@ function create() {
     currentHeightText.anchor.setTo(1, 0);
 
     // ********Setting up controls********
-    keyboardControls = new KeyboardControls(game.input, kite);
-    gestureControls = new GestureControls(game.input, kite);
+    // keyboardControls = new KeyboardControls(game.input, kite);
+    gestureControls = new GestureControls(game.input, kite, game.time);
 
     // ********Camera********
     game.camera.y = kite.y;
@@ -249,7 +266,7 @@ function update() {
     kite.body.velocity.y += 2.5; // Gravity
     game.world.wrap(kite.body, 10);
 
-    keyboardControls.update();
+    // keyboardControls.update();
 
     altitude =  Math.round(kiteStartingY - kite.body.y);
     if (altitude >= score) {
@@ -376,6 +393,24 @@ function increaseDifficulty(){
     }
 }
 
+// Source for these two methods: http://www.emanueleferonato.com/2015/04/23/how-to-lock-orientation-in-your-html5-responsive-game-using-phaser/
+function handleIncorrect(){
+        if (!game.device.desktop) {
+            document.getElementById("turn").style.display="block";
+        }
+    }
+
+function handleCorrect(){
+    if (!game.device.desktop) {
+        if (firstRunLandscape) {
+            gameRatio = window.innerWidth/window.innerHeight;       
+            game.width = Math.ceil(640*gameRatio);
+            game.height = 640;
+            game.renderer.resize(game.width,game.height);
+        }
+        document.getElementById("turn").style.display="none";
+    }
+}
 
 // Displays instructions for the first 5 seconds of the game
 function showInstructions() {
