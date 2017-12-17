@@ -99,8 +99,6 @@ function create() {
 
     // ********creating the audio files********
     music = game.add.audio('theme');
-    music.loop=true;
-    music.play();
     collect=game.add.audio('collect');
     gameOverSound=game.add.audio('gameOverSound');
     losstheme=game.add.audio('losstheme');
@@ -321,6 +319,9 @@ function createPowerup() {
 
 function lose() {
     // Stops the game
+    gameOverSound.play();
+    losstheme.loop=true;
+    losstheme.play();
     stopGame();
 
     // Displays game over text
@@ -377,21 +378,6 @@ function adjustLoseVolume() {
     }
 }
 
-function increaseDifficulty(){
-     if(altitude<1000){
-        rea
-
-    }
-
-    else if(altitude>=1000 && altitude< 1500){
-        powerupTimer.loop(2500, createPowerup, this);
-    }
-
-    else if(altitude>=1500){
-        powerupTimer.loop(3500, createPowerup, this);
-    }
-}
-
 // Source for these two methods: http://www.emanueleferonato.com/2015/04/23/how-to-lock-orientation-in-your-html5-responsive-game-using-phaser/
 function handleIncorrect(){
         if (!game.device.desktop) {
@@ -439,9 +425,7 @@ function stopGame() {
   playerIsAlive = false;
   music.stop();
   danger.stop();
-  gameOverSound.play();
-  losstheme.loop=true;
-  losstheme.play();
+
 
   kite.kill();
   for (powerup of powerups) {
@@ -456,6 +440,8 @@ function stopGame() {
 }
 
 function hideInstructions() {
+  music.loop=true;
+  music.play();
   moveText.visible = false;
   moveArrow.visible = false;
   powerupText.visible = false;
