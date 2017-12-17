@@ -3,26 +3,19 @@ var firstRunLandscape;
 
 function preload() {
         //scaling window for all devices
-<<<<<<< HEAD
-        //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-=======
         firstRunLandscape = game.scale.isGameLandscape;
->>>>>>> ea08cd1c8600f8fb72915abc60045c6540cc6dee
-        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
+        game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.image('playPortrait', 'landscapeTextDisplay.png');
         game.load.spritesheet('string', 'assets/images/testString2.png', 4, 26);
         game.load.spritesheet('kite', 'assets/images/simpleKite.png', 40, 60);
-<<<<<<< HEAD
-        game.load.spritesheet('powerUp','assets/images/powerup.png', 76, 76);
-        game.load.spritesheet('restartButton', 'assets/images/restartButton.png', 100, 100);
-=======
         game.load.spritesheet('powerUp','assets/images/wind.png', 76, 76);
-        game.load.spritesheet('restartButton', 'assets/images/restartButton.jpeg', 100, 100);
->>>>>>> ea08cd1c8600f8fb72915abc60045c6540cc6dee
+        game.load.spritesheet('restartButton', 'assets/images/restartButton.png', 100, 100);
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
         game.load.spritesheet('loseBoundary', 'assets/images/loseBoundary.png', 15, game.width);
+        game.load.spritesheet('arrow', 'assets/images/arrow.png', 100, 100);
         game.load.audio('theme','assets/audio/theme1.wav');
         game.load.audio('collect','assets/audio/collect.wav');
         game.load.audio('gameOverSound','assets/audio/lose.wav');
@@ -70,6 +63,7 @@ var restartButton;
 var gameOverText;
 var endScoreText;
 var currentHeightText;
+var textConstant = 140;
 
 var powerupsToCreate = [];
 var powerups = [];
@@ -83,10 +77,10 @@ var portraitText;
 // Inctruction variables
 var moveText;
 var moveArrow;
-var obstacleText;
+var powerupText;
 var redBarText;
 var instructionsTimer;
-var gameStart = 0;
+var instructionsColor;
 
 //scaling ratios//
 var powerUpScaleRatio = window.devicePixelRatio / 6;
@@ -182,26 +176,36 @@ function create() {
     reach4000=false;
 
     powerupTimer = game.time.create(false);
-    console.log(altitude);
     powerupTimer.loop(500, createPowerup, this);
     powerupTimer.start();
     playerIsAlive = true;
 
-    // Instructions
+    moveText = game.add.text(kiteStartingX + 100, kiteStartingY + 20, "Hold down and drag to move the kite", {font: '12px Arial', fill: '#000000'});
+    moveArrow = game.add.sprite(kiteStartingX, kiteStartingY, "arrow");
+    powerupText = game.add.text(kiteStartingX + 100, kiteStartingY + 100, "Collect powerups to boost higher up", {font: '12px Arial', fill: '#000000'});
+    redBarText = game.add.text(kiteStartingX - 95, kiteStartingY + 375, "Don't hit the red bar below, or else!", {font: '12px Arial', fill: '#000000'});
+
+
+    // ********* Gameover text ***********
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - textConstant, 'Game Over', { font: '25px Arial', fill: '#000000'});
+    endScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - textConstant + 30, 'Score: '+ score + " ft", { font: '20px Arial', fill: '#000000'});
+    restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - textConstant + 50, 'restartButton', actionOnClick);
+
+    gameOverText.anchor.setTo(0.5);
+    endScoreText.anchor.setTo(0.5);
+
+    gameOverText.visible = false;
+    endScoreText.visible = false;
+    restartButton.visible = false;
+
+    // ********Instructions*********
     instructionsTimer = game.time.create(false);
-    moveText = game.add.text(kiteStartingX - 100, kiteStartingY, "Hold down and drag to move the kite",
-               {font: '12px Arial', fill: '#B03A2E'});
-    timer.loop(5000, updateCounter, this);
+    instructionsTimer.add(5000, hideInstructions, this);
+    showInstructions();
     instructionsTimer.start();
 }
 
-function updateCounter() {
-  gameStart = 1;
-}
-
-
 function actionOnClick () {
-    // console.log("KITE STARTING Y: " + kiteStartingY);
     danger.play();
     losstheme.stop();
     gameOverSound.stop();
@@ -216,7 +220,6 @@ function actionOnClick () {
     currentHeightText.visible = true;
 
     loseBoundary.y = kiteStartingY + 400;
-    console.log("LOSE BOUNDARY Y: " + (loseBoundary.position.y + kiteStartingY + 400));
 
     kite.revive();
     kite.body.x = game.world.centerX;
@@ -274,6 +277,11 @@ function update() {
     }
     playingScoreText.setText(score + " ft");
     currentHeightText.setText(altitude + " ft");
+
+    if(!playerIsAlive) {
+      kite.body.velocity.x = 0;
+      kite.body.velocity.y = 0;
+    }
 }
 
 // Creates 2 powerups, one below the kite and one above the kite (unless the kite is near the top of the screen).
@@ -312,30 +320,21 @@ function createPowerup() {
 }
 
 function lose() {
-    playerIsAlive = false;
-    music.stop();
-    danger.stop();
-    gameOverSound.play();
-    losstheme.loop=true;
-    losstheme.play();
+    // Stops the game
+    stopGame();
 
-    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 130, 'Game Over', { font: '25px Arial', fill: '#F1503A'});
+    // Displays game over text
+
+    gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - textConstant, 'Game Over', { font: '25px Arial', fill: '#F1503A'});
+    endScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - textConstant + 30, 'Score: '+ score + " ft", { font: '20px Arial', fill: '#2534F50'});
+    restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - textConstant + 50, 'restartButton', actionOnClick);
+
     gameOverText.anchor.setTo(0.5);
-
-    endScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - 100, 'Score: '+ score + " ft", { font: '20px Arial', fill: '#2534F50'});
     endScoreText.anchor.setTo(0.5);
 
-    restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - 80, 'restartButton', actionOnClick);
-
-    kite.kill();
-    for (powerup of powerups) {
-        powerup.kill();
-    }
-
-    game.camera.unfollow();
-    playingScoreText.visible = false;
-    currentHeightText.visible = false;
-    powerupsToCreate = [];
+    gameOverText.visible = true;
+    endScoreText.visible = true;
+    restartButton.visible = true;
   }
 
 function hitPowerup(kiteBody, powerupBody) {
@@ -403,7 +402,7 @@ function handleIncorrect(){
 function handleCorrect(){
     if (!game.device.desktop) {
         if (firstRunLandscape) {
-            gameRatio = window.innerWidth/window.innerHeight;       
+            gameRatio = window.innerWidth/window.innerHeight;
             game.width = Math.ceil(640*gameRatio);
             game.height = 640;
             game.renderer.resize(game.width,game.height);
@@ -414,13 +413,67 @@ function handleCorrect(){
 
 // Displays instructions for the first 5 seconds of the game
 function showInstructions() {
+
+  stopGame();
+  kite.revive();
+  kite.body.x = kiteStartingX;
+  kite.body.y = kiteStartingY + 200;
+
+  console.log(kiteStartingY + game.camera.y / 2);
+
+  moveArrow.x = kite.body.x + 50;
+  moveArrow.y = kite.body.y + 50;
+  powerupText.x = kite.body.x - 50;
+  powerupText.y = kite.body.y - 50;
+  redBarText.x = kite.body.x;
+  redBarText.y = kite.body.y + 350;
+
+
   moveText.visible = true;
+  moveArrow.visible = true;
+  powerupText.visible = true;
+  redBarText.visible = true;
 }
 
-function instructionsCondition() {
-  if(gameStart == 0) {
-    showInstructions();
-  } else if(gameStart == 1) {
-    actionOnClick();
+function stopGame() {
+  playerIsAlive = false;
+  music.stop();
+  danger.stop();
+  gameOverSound.play();
+  losstheme.loop=true;
+  losstheme.play();
+
+  kite.kill();
+  for (powerup of powerups) {
+      powerup.kill();
   }
+
+  game.camera.unfollow();
+  playingScoreText.visible = false;
+  currentHeightText.visible = false;
+  powerupsToCreate = [];
+
+}
+
+function hideInstructions() {
+  moveText.visible = false;
+  moveArrow.visible = false;
+  powerupText.visible = false;
+  redBarText.visible = false;
+
+  background.visible = true;
+  playingScoreText.visible = true;
+  currentHeightText.visible = true;
+
+  loseBoundary.y = kiteStartingY + 400;
+
+  kite.revive();
+  kite.body.x = game.world.centerX;
+  kite.body.y = kiteStartingY;
+  kite.body.velocity.x = 0;
+  kite.body.velocity.y = -300;
+
+  game.camera.y = kite.body.y;
+  game.camera.follow(kite, Phaser.Camera.FOLLOW_LOCKON, .1 ,.1);
+  playerIsAlive = true;
 }
