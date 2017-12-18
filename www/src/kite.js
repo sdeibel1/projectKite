@@ -5,7 +5,7 @@ function preload() {
         //scaling window for all devices
         firstRunLandscape = game.scale.isGameLandscape;
         //game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
-        game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+        //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.image('playPortrait', 'landscapeTextDisplay.png');
@@ -15,7 +15,7 @@ function preload() {
         game.load.spritesheet('restartButton', 'assets/images/restartButton.png', 100, 100);
         game.load.spritesheet('goon', 'assets/images/turtleShell.png', 50, 50);
         game.load.spritesheet('loseBoundary', 'assets/images/loseBoundary.png', 15, game.width);
-        game.load.spritesheet('arrow', 'assets/images/arrow.png', 100, 100);
+        game.load.spritesheet('arrow', 'assets/images/arrow3.png', 70, 23);
         game.load.audio('theme','assets/audio/theme1.wav');
         game.load.audio('collect','assets/audio/collect.wav');
         game.load.audio('gameOverSound','assets/audio/lose.wav');
@@ -23,9 +23,9 @@ function preload() {
         game.load.audio('whoosh','assets/audio/whoosh.wav');
         game.load.audio('danger','assets/audio/danger.wav');
 
-        game.scale.forceOrientation(false, true);
-        game.scale.enterIncorrectOrientation.add(handleIncorrect);
-        game.scale.leaveIncorrectOrientation.add(handleCorrect);
+        // game.scale.forceOrientation(false, true);
+        // game.scale.enterIncorrectOrientation.add(handleIncorrect);
+        // game.scale.leaveIncorrectOrientation.add(handleCorrect);
 }
 
 var kiteCollisionGroup;
@@ -177,8 +177,8 @@ function create() {
 
     moveText = game.add.text(kiteStartingX + 100, kiteStartingY + 20, "Hold down and drag to move the kite", {font: '12px Arial', fill: '#000000'});
     moveArrow = game.add.sprite(kiteStartingX, kiteStartingY, "arrow");
-    powerupText = game.add.text(kiteStartingX + 100, kiteStartingY + 100, "Collect powerups to boost higher up", {font: '12px Arial', fill: '#000000'});
-    redBarText = game.add.text(kiteStartingX - 95, kiteStartingY + 375, "Don't hit the red bar below, or else!", {font: '12px Arial', fill: '#000000'});
+    powerupText = game.add.text(kiteStartingX + 100, kiteStartingY + 100, "Collect wind powerups to boost as high as you can!", {font: '12px Arial', fill: '#000000'});
+    redBarText = game.add.text(kiteStartingX - 150, kiteStartingY + 150, "Don't hit the red bar below, or else!", {font: '12px Arial', fill: '#000000'});
 
 
     // ********* Gameover text ***********
@@ -410,12 +410,14 @@ function showInstructions() {
   kite.body.x = kiteStartingX;
   kite.body.y = kiteStartingY + 200;
 
-  moveArrow.x = kite.body.x + 50;
-  moveArrow.y = kite.body.y + 50;
-  powerupText.x = kite.body.x - 50;
-  powerupText.y = kite.body.y - 50;
-  redBarText.x = kite.body.x;
-  redBarText.y = kite.body.y + 350;
+  moveArrow.x = kite.body.x + 20;
+  moveArrow.y = kite.body.y - 10;
+  moveText.x = kite.body.x - 90;
+  moveText.y = kite.body.y - 50;
+  powerupText.x = kite.body.x - 120;
+  powerupText.y = kite.body.y - 150;
+  redBarText.x = kite.body.x - 80;
+  redBarText.y = kite.body.y + 170;
 
 
   moveText.visible = true;
