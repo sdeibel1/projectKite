@@ -40,9 +40,9 @@ var kite;
 var kiteStartingX;
 var kiteStartingY;
 var score = 0;
-var reach3000;
-var reach6000;
-
+var difficulty = 0;
+var lastScore = 0;
+var maxScoreInRun = 0;
 
 // Pertain to the lose boundary
 var graphics;
@@ -99,8 +99,6 @@ function create() {
 
     // ********creating the audio files********
     music = game.add.audio('theme');
-    music.loop=true;
-    music.play();
     collect=game.add.audio('collect');
     gameOverSound=game.add.audio('gameOverSound');
     losstheme=game.add.audio('losstheme');
@@ -157,7 +155,7 @@ function create() {
 
     // ********Setting up controls********
     // keyboardControls = new KeyboardControls(game.input, kite);
-    gestureControls = new GestureControls(game.input, kite, game.time);
+    gestureControls = new GestureControls(game.input, kite);
 
     // ********Camera********
     game.camera.y = kite.y;
@@ -172,9 +170,6 @@ function create() {
     loseBoundary.y = kiteStartingY + 400;
 
     // ********Timers********
-    reach1000=false;
-    reach4000=false;
-
     powerupTimer = game.time.create(false);
     powerupTimer.loop(500, createPowerup, this);
     powerupTimer.start();
@@ -220,6 +215,11 @@ function actionOnClick () {
     currentHeightText.visible = true;
 
     loseBoundary.y = kiteStartingY + 400;
+    difficulty = 0;
+    powerupTimer.removeAll();
+    powerupTimer.loop(500 + difficulty * 125, createPowerup, this);
+    lastScore = 0;
+    maxScoreInRun = 0;
 
     kite.revive();
     kite.body.x = game.world.centerX;
@@ -255,16 +255,7 @@ function update() {
             lose();
         }
     }
-    if(playerIsAlive && score>=3000 && score<6000 && reach3000==false){
-        powerupTimer.removeAll();
-        powerupTimer.loop(1000, createPowerup, this);
-        reach3000=true;
-    }
-   if(playerIsAlive && score>=6000 && reach6000==false){
-        powerupTimer.removeAll();
-        powerupTimer.loop(1300, createPowerup, this);
-        reach6000=true;
-    }
+    increaseDifficulty();
     updateKiteAngle();
     kite.body.velocity.y += 2.5; // Gravity
     game.world.wrap(kite.body, 10);
@@ -275,12 +266,24 @@ function update() {
     if (altitude >= score) {
         score = altitude;
     }
+    if (altitude >= maxScoreInRun) {
+        maxScoreInRun = altitude;
+    }
     playingScoreText.setText(score + " ft");
     currentHeightText.setText(altitude + " ft");
 
     if(!playerIsAlive) {
       kite.body.velocity.x = 0;
       kite.body.velocity.y = 0;
+    }
+}
+
+function increaseDifficulty() {
+    if (playerIsAlive && maxScoreInRun >= lastScore + 1000 && difficulty < 15) {
+        lastScore = maxScoreInRun;
+        difficulty += 1;
+        powerupTimer.removeAll();
+        powerupTimer.loop(500 + difficulty * 125, createPowerup, this);
     }
 }
 
@@ -321,12 +324,15 @@ function createPowerup() {
 
 function lose() {
     // Stops the game
+    gameOverSound.play();
+    losstheme.loop=true;
+    losstheme.play();
     stopGame();
 
     // Displays game over text
 
     gameOverText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - textConstant, 'Game Over', { font: '25px Arial', fill: '#F1503A'});
-    endScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - textConstant + 30, 'Score: '+ score + " ft", { font: '20px Arial', fill: '#2534F50'});
+    endScoreText = game.add.text(game.camera.x + game.width/2, game.camera.y + game.height/2 - textConstant + 30, 'Score: '+ maxScoreInRun + " ft", { font: '20px Arial', fill: '#2534F50'});
     restartButton = game.add.button(game.camera.x + game.width/2 - 50, game.camera.y + game.height/2 - textConstant + 50, 'restartButton', actionOnClick);
 
     gameOverText.anchor.setTo(0.5);
@@ -377,20 +383,6 @@ function adjustLoseVolume() {
     }
 }
 
-function increaseDifficulty(){
-     if(altitude<1000){
-        rea
-    }
-
-    else if(altitude>=1000 && altitude< 1500){
-        powerupTimer.loop(2500, createPowerup, this);
-    }
-
-    else if(altitude>=1500){
-        powerupTimer.loop(3500, createPowerup, this);
-    }
-}
-
 // Source for these two methods: http://www.emanueleferonato.com/2015/04/23/how-to-lock-orientation-in-your-html5-responsive-game-using-phaser/
 function handleIncorrect(){
         if (!game.device.desktop) {
@@ -418,8 +410,6 @@ function showInstructions() {
   kite.body.x = kiteStartingX;
   kite.body.y = kiteStartingY + 200;
 
-  console.log(kiteStartingY + game.camera.y / 2);
-
   moveArrow.x = kite.body.x + 50;
   moveArrow.y = kite.body.y + 50;
   powerupText.x = kite.body.x - 50;
@@ -438,9 +428,7 @@ function stopGame() {
   playerIsAlive = false;
   music.stop();
   danger.stop();
-  gameOverSound.play();
-  losstheme.loop=true;
-  losstheme.play();
+
 
   kite.kill();
   for (powerup of powerups) {
@@ -455,6 +443,9 @@ function stopGame() {
 }
 
 function hideInstructions() {
+  music.loop=true;
+  music.play();
+  danger.play();
   moveText.visible = false;
   moveArrow.visible = false;
   powerupText.visible = false;
