@@ -380,7 +380,6 @@ function adjustLoseVolume() {
 function increaseDifficulty(){
      if(altitude<1000){
         rea
-
     }
 
     else if(altitude>=1000 && altitude< 1500){
