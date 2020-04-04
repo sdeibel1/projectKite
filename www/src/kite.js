@@ -5,7 +5,7 @@ function preload() {
         //scaling window for all devices
         firstRunLandscape = game.scale.isGameLandscape;
         //game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
-        //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+        game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
 
         game.load.image('bigClouds', 'assets/images/tallClouds.jpg');
         game.load.image('playPortrait', 'landscapeTextDisplay.png');
@@ -23,9 +23,9 @@ function preload() {
         game.load.audio('whoosh','assets/audio/whoosh.wav');
         game.load.audio('danger','assets/audio/danger.wav');
 
-        // game.scale.forceOrientation(false, true);
-        // game.scale.enterIncorrectOrientation.add(handleIncorrect);
-        // game.scale.leaveIncorrectOrientation.add(handleCorrect);
+        game.scale.forceOrientation(false, true);
+        game.scale.enterIncorrectOrientation.add(handleIncorrect);
+        game.scale.leaveIncorrectOrientation.add(handleCorrect);
 }
 
 var kiteCollisionGroup;
